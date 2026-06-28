@@ -1,0 +1,10 @@
+<api>
+  <acw-types partial-assembly-name="Xamarin.JavaX.Inject" module-name="Xamarin.JavaX.Inject.dll">
+    <type assembly-qualified-name="JavaX.Inject.IInject, Xamarin.JavaX.Inject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="javax.inject.Inject" java-key="javax.inject.Inject" managed-key="JavaX.Inject.IInject" partial-assembly-qualified-name="JavaX.Inject.IInject, Xamarin.JavaX.Inject" />
+    <type assembly-qualified-name="JavaX.Inject.INamed, Xamarin.JavaX.Inject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="javax.inject.Named" java-key="javax.inject.Named" managed-key="JavaX.Inject.INamed" partial-assembly-qualified-name="JavaX.Inject.INamed, Xamarin.JavaX.Inject" />
+    <type assembly-qualified-name="JavaX.Inject.IProvider, Xamarin.JavaX.Inject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="javax.inject.Provider" java-key="javax.inject.Provider" managed-key="JavaX.Inject.IProvider" partial-assembly-qualified-name="JavaX.Inject.IProvider, Xamarin.JavaX.Inject" />
+    <type assembly-qualified-name="JavaX.Inject.IQualifier, Xamarin.JavaX.Inject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="javax.inject.Qualifier" java-key="javax.inject.Qualifier" managed-key="JavaX.Inject.IQualifier" partial-assembly-qualified-name="JavaX.Inject.IQualifier, Xamarin.JavaX.Inject" />
+    <type assembly-qualified-name="JavaX.Inject.IScope, Xamarin.JavaX.Inject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="javax.inject.Scope" java-key="javax.inject.Scope" managed-key="JavaX.Inject.IScope" partial-assembly-qualified-name="JavaX.Inject.IScope, Xamarin.JavaX.Inject" />
+    <type assembly-qualified-name="JavaX.Inject.ISingleton, Xamarin.JavaX.Inject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="javax.inject.Singleton" java-key="javax.inject.Singleton" managed-key="JavaX.Inject.ISingleton" partial-assembly-qualified-name="JavaX.Inject.ISingleton, Xamarin.JavaX.Inject" />
+  </acw-types>
+</api>

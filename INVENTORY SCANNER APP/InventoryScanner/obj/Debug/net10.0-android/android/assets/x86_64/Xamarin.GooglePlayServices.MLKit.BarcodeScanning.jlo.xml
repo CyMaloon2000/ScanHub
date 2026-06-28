@@ -1,0 +1,6 @@
+<api>
+  <acw-types partial-assembly-name="Xamarin.GooglePlayServices.MLKit.BarcodeScanning" module-name="Xamarin.GooglePlayServices.MLKit.BarcodeScanning.dll">
+    <type assembly-qualified-name="Xamarin.Google.MLKit.Vision.BarCode.IBarcodeScanner, Xamarin.GooglePlayServices.MLKit.BarcodeScanning, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="com.google.mlkit.vision.barcode.BarcodeScanner" java-key="com.google.mlkit.vision.barcode.BarcodeScanner" managed-key="Xamarin.Google.MLKit.Vision.BarCode.IBarcodeScanner" partial-assembly-qualified-name="Xamarin.Google.MLKit.Vision.BarCode.IBarcodeScanner, Xamarin.GooglePlayServices.MLKit.BarcodeScanning" />
+    <type assembly-qualified-name="Xamarin.Google.MLKit.Vision.BarCode.ZoomSuggestionOptions+IZoomCallback, Xamarin.GooglePlayServices.MLKit.BarcodeScanning, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="com.google.mlkit.vision.barcode.ZoomSuggestionOptions$ZoomCallback" java-key="com.google.mlkit.vision.barcode.ZoomSuggestionOptions$ZoomCallback" managed-key="Xamarin.Google.MLKit.Vision.BarCode.ZoomSuggestionOptions.IZoomCallback" partial-assembly-qualified-name="Xamarin.Google.MLKit.Vision.BarCode.ZoomSuggestionOptions+IZoomCallback, Xamarin.GooglePlayServices.MLKit.BarcodeScanning" />
+  </acw-types>
+</api>

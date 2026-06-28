@@ -1,0 +1,6 @@
+<api>
+  <acw-types partial-assembly-name="Xamarin.Firebase.Encoders.Proto" module-name="Xamarin.Firebase.Encoders.Proto.dll">
+    <type assembly-qualified-name="Firebase.Encoders.Proto.IProtobuf, Xamarin.Firebase.Encoders.Proto, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="com.google.firebase.encoders.proto.Protobuf" java-key="com.google.firebase.encoders.proto.Protobuf" managed-key="Firebase.Encoders.Proto.IProtobuf" partial-assembly-qualified-name="Firebase.Encoders.Proto.IProtobuf, Xamarin.Firebase.Encoders.Proto" />
+    <type assembly-qualified-name="Firebase.Encoders.Proto.IProtoEnum, Xamarin.Firebase.Encoders.Proto, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="com.google.firebase.encoders.proto.ProtoEnum" java-key="com.google.firebase.encoders.proto.ProtoEnum" managed-key="Firebase.Encoders.Proto.IProtoEnum" partial-assembly-qualified-name="Firebase.Encoders.Proto.IProtoEnum, Xamarin.Firebase.Encoders.Proto" />
+  </acw-types>
+</api>

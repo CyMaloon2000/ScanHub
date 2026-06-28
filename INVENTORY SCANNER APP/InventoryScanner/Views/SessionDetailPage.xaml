@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:InventoryScanner.ViewModels"
+             xmlns:models="clr-namespace:InventoryScanner.Models"
+             x:Class="InventoryScanner.Views.SessionDetailPage"
+             x:DataType="vm:SessionDetailViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView Padding="16">
+        <VerticalStackLayout Spacing="16">
+
+            <VerticalStackLayout Spacing="14" IsVisible="{Binding IsNew}">
+                <Label Text="Create Inventory Session" Style="{StaticResource TitleHeader}" Margin="0,4"/>
+
+                <Border Style="{StaticResource InventoryCard}" Padding="20">
+                    <VerticalStackLayout Spacing="14">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Building *" FontSize="13" FontAttributes="Bold"/>
+                            <Border StrokeShape="RoundRectangle 8" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" Padding="8,2">
+                                <Picker ItemsSource="{Binding Buildings}"
+                                        ItemDisplayBinding="{Binding BuildingName}"
+                                        SelectedItem="{Binding SelectedBuilding}"
+                                        TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Location *" FontSize="13" FontAttributes="Bold"/>
+                            <Border StrokeShape="RoundRectangle 8" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" Padding="8,2">
+                                <Picker ItemsSource="{Binding Locations}"
+                                        ItemDisplayBinding="{Binding LocationName}"
+                                        SelectedItem="{Binding SelectedLocation}"
+                                        TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Room *" FontSize="13" FontAttributes="Bold"/>
+                            <Border StrokeShape="RoundRectangle 8" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" Padding="8,2">
+                                <Picker ItemsSource="{Binding Rooms}"
+                                        ItemDisplayBinding="{Binding RoomName}"
+                                        SelectedItem="{Binding SelectedRoom}"
+                                        TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Office (Optional)" FontSize="13" FontAttributes="Bold"/>
+                            <Border StrokeShape="RoundRectangle 8" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" Padding="8,2">
+                                <Picker ItemsSource="{Binding Offices}"
+                                        ItemDisplayBinding="{Binding OfficeName}"
+                                        SelectedItem="{Binding SelectedOffice}"
+                                        TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Description / Notes" FontSize="13" FontAttributes="Bold"/>
+                            <Border StrokeShape="RoundRectangle 8" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" Padding="8,2">
+                                <Editor Text="{Binding Description}" HeightRequest="70"/>
+                            </Border>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="12">
+                    <Button Text="Cancel" Command="{Binding CancelCommand}" Style="{StaticResource OutlineButton}"/>
+                    <Button Grid.Column="1" Text="Save Session" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}"/>
+                </Grid>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="16" IsVisible="{Binding IsNew, Converter={StaticResource InverseBoolConverter}}">
+                <Grid ColumnDefinitions="*, Auto">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="{Binding SessionName}" FontSize="20" FontAttributes="Bold"/>
+                        <Label Text="{Binding CreatedBy}" FontSize="13"/>
+                    </VerticalStackLayout>
+                    <Border Grid.Column="1" StrokeShape="RoundRectangle 8"
+                            BackgroundColor="{Binding SelectedStatus, Converter={StaticResource StatusToColorConverter}}"
+                            StrokeThickness="0" Padding="12,6" VerticalOptions="Center">
+                        <Label Text="{Binding SelectedStatus}" FontSize="12" TextColor="White" FontAttributes="Bold"/>
+                    </Border>
+                </Grid>
+
+                <Border Style="{StaticResource InventoryCard}" Padding="20">
+                    <VerticalStackLayout Spacing="16">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Audited Scanned Items" FontSize="14" FontAttributes="Bold"/>
+                                <Label Text="{Binding ScanCount, StringFormat='{0} Items'}" FontSize="32" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
+                            </VerticalStackLayout>
+                            <Border Grid.Column="1" StrokeShape="RoundRectangle 16" BackgroundColor="{AppThemeBinding Light={StaticResource ChipBgLight}, Dark={StaticResource ChipBgDark}}"
+                                    StrokeThickness="0" Padding="16,12" VerticalOptions="Center">
+                                <Label Text="● Offline" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
+                            </Border>
+                        </Grid>
+                        <Label Text="{Binding Description}" FontSize="13"/>
+                        <Label Text="{Binding SessionName, StringFormat='Scope: {0}'}" FontSize="13"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="12" IsVisible="{Binding CanStartScanning}">
+                    <Button Text="Scan (V1)"
+                            Command="{Binding StartScanningCommand}"
+                            Style="{StaticResource AccentButton}"
+                            HeightRequest="56" FontSize="16" CornerRadius="14"/>
+                    <Button Grid.Column="1"
+                            Text="Scan (V2)"
+                            Command="{Binding StartScanningV2Command}"
+                            Style="{StaticResource PrimaryButton}"
+                            HeightRequest="56" FontSize="16" CornerRadius="14"/>
+                </Grid>
+
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Label Text="Recent Scans" FontSize="16" FontAttributes="Bold" VerticalOptions="Center"/>
+                        <Button Grid.Column="1" Text="View All" Command="{Binding ViewHistoryCommand}"
+                                BackgroundColor="Transparent" TextColor="{StaticResource Primary}" FontSize="13" FontAttributes="Bold"
+                                Padding="8,4" HeightRequest="32"/>
+                    </Grid>
+
+                    <CollectionView ItemsSource="{Binding RecentScans}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="No scans completed in this session yet." FontSize="13" HorizontalOptions="Center" Margin="0,12"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:ScannedItem">
+                                <Border Style="{StaticResource InventoryCard}" Padding="12" Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12">
+                                        <Border StrokeShape="RoundRectangle 8" BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="0" WidthRequest="40" HeightRequest="40" VerticalOptions="Center">
+                                            <Label Text="◆" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource Primary}"/>
+                                        </Border>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                            <Label Text="{Binding UniqueIdentifier}" FontSize="14" FontAttributes="Bold"/>
+                                            <Label Text="{Binding ScannedAt, StringFormat='{0:h:mm tt}'}" FontSize="12"/>
+                                        </VerticalStackLayout>
+                                        <Border Grid.Column="2" StrokeShape="RoundRectangle 6" BackgroundColor="{AppThemeBinding Light={StaticResource ChipBgLight}, Dark={StaticResource ChipBgDark}}" StrokeThickness="0" Padding="8,3" VerticalOptions="Center">
+                                            <Label Text="{Binding BarcodeType}" FontSize="10" FontAttributes="Bold"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <Border Style="{StaticResource InventoryCard}" Padding="16" Margin="0,4,0,0">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Edit Session Configuration" FontSize="14" FontAttributes="Bold"/>
+                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="16" VerticalOptions="Center">
+                            <Label Text="Session status:" FontSize="13" VerticalOptions="Center"/>
+                            <Border Grid.Column="1" StrokeShape="RoundRectangle 8" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}" BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" WidthRequest="130" HeightRequest="38" Padding="6,0">
+                                <Picker ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding SelectedStatus}" FontSize="13" VerticalOptions="Center"/>
+                            </Border>
+                        </Grid>
+
+                        <Button Text="Save Settings" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" Margin="0,8,0,0" HeightRequest="40"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Text="Back to Sessions" Command="{Binding CancelCommand}" Style="{StaticResource OutlineButton}"/>
+            </VerticalStackLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

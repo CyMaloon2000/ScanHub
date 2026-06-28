@@ -1,0 +1,16 @@
+<api type="debug" assembly-name="InventoryScanner" mvid="e78cd2c3b63541df82fa25aa56daefc8">
+  <java-to-managed>
+    <entry java-name="crc6471c8d124757f44f1/MainActivity" managed-name="InventoryScanner.MainActivity, InventoryScanner" managed-type-token-id="33554460" />
+    <entry java-name="crc6471c8d124757f44f1/MainApplication" managed-name="InventoryScanner.MainApplication, InventoryScanner" managed-type-token-id="33554461" />
+    <entry java-name="crc642c3bad5b1fa407ec/ScannerV2Page_NativeMlKitCameraController" managed-name="InventoryScanner.Views.ScannerV2Page+NativeMlKitCameraController, InventoryScanner" managed-type-token-id="33554626" />
+    <entry java-name="crc642c3bad5b1fa407ec/ScannerV2Page_NativeMlKitCameraController_BarcodeSuccessListener" managed-name="InventoryScanner.Views.ScannerV2Page+NativeMlKitCameraController+BarcodeSuccessListener, InventoryScanner" managed-type-token-id="33554842" />
+    <entry java-name="crc642c3bad5b1fa407ec/ScannerV2Page_NativeMlKitCameraController_BarcodeFailureListener" managed-name="InventoryScanner.Views.ScannerV2Page+NativeMlKitCameraController+BarcodeFailureListener, InventoryScanner" managed-type-token-id="33554843" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="crc6471c8d124757f44f1/MainActivity" managed-name="InventoryScanner.MainActivity, InventoryScanner" managed-type-token-id="33554460" />
+    <entry java-name="crc6471c8d124757f44f1/MainApplication" managed-name="InventoryScanner.MainApplication, InventoryScanner" managed-type-token-id="33554461" />
+    <entry java-name="crc642c3bad5b1fa407ec/ScannerV2Page_NativeMlKitCameraController" managed-name="InventoryScanner.Views.ScannerV2Page+NativeMlKitCameraController, InventoryScanner" managed-type-token-id="33554626" />
+    <entry java-name="crc642c3bad5b1fa407ec/ScannerV2Page_NativeMlKitCameraController_BarcodeSuccessListener" managed-name="InventoryScanner.Views.ScannerV2Page+NativeMlKitCameraController+BarcodeSuccessListener, InventoryScanner" managed-type-token-id="33554842" />
+    <entry java-name="crc642c3bad5b1fa407ec/ScannerV2Page_NativeMlKitCameraController_BarcodeFailureListener" managed-name="InventoryScanner.Views.ScannerV2Page+NativeMlKitCameraController+BarcodeFailureListener, InventoryScanner" managed-type-token-id="33554843" />
+  </managed-to-java>
+</api>

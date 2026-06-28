@@ -1,0 +1,12 @@
+<api type="debug" assembly-name="Xamarin.Firebase.Encoders.JSON" mvid="d58c9853f96049dbaaa4768ecbdf1e8e">
+  <java-to-managed>
+    <entry java-name="com/google/firebase/encoders/json/BuildConfig" managed-name="Firebase.Encoders.JSON.BuildConfig, Xamarin.Firebase.Encoders.JSON" managed-type-token-id="33554436" />
+    <entry java-name="com/google/firebase/encoders/json/NumberedEnum" managed-name="Firebase.Encoders.JSON.INumberedEnum, Xamarin.Firebase.Encoders.JSON" skip-in-java-to-managed="True" managed-type-token-id="33554437" />
+    <entry java-name="com/google/firebase/encoders/json/NumberedEnum" managed-name="Firebase.Encoders.JSON.INumberedEnumInvoker, Xamarin.Firebase.Encoders.JSON" managed-type-token-id="33554438" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="com/google/firebase/encoders/json/BuildConfig" managed-name="Firebase.Encoders.JSON.BuildConfig, Xamarin.Firebase.Encoders.JSON" managed-type-token-id="33554436" />
+    <entry java-name="com/google/firebase/encoders/json/NumberedEnum" managed-name="Firebase.Encoders.JSON.INumberedEnum, Xamarin.Firebase.Encoders.JSON" skip-in-java-to-managed="True" managed-type-token-id="33554437" />
+    <entry java-name="com/google/firebase/encoders/json/NumberedEnum" managed-name="Firebase.Encoders.JSON.INumberedEnumInvoker, Xamarin.Firebase.Encoders.JSON" managed-type-token-id="33554438" />
+  </managed-to-java>
+</api>

@@ -1,0 +1,34 @@
+<api type="debug" assembly-name="Xamarin.Google.Android.ODML.Image" mvid="3eac85fc7f1b48e89828e18659ccf106">
+  <java-to-managed>
+    <entry java-name="com/google/android/odml/image/BitmapExtractor" managed-name="Xamarin.Google.Android.Odml.Image.BitmapExtractor, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554439" />
+    <entry java-name="com/google/android/odml/image/BitmapMlImageBuilder" managed-name="Xamarin.Google.Android.Odml.Image.BitmapMlImageBuilder, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554440" />
+    <entry java-name="com/google/android/odml/image/ByteBufferExtractor" managed-name="Xamarin.Google.Android.Odml.Image.ByteBufferExtractor, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554441" />
+    <entry java-name="com/google/android/odml/image/ByteBufferMlImageBuilder" managed-name="Xamarin.Google.Android.Odml.Image.ByteBufferMlImageBuilder, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554442" />
+    <entry java-name="com/google/android/odml/image/ImageProperties" managed-name="Xamarin.Google.Android.Odml.Image.ImageProperties, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554443" />
+    <entry java-name="com/google/android/odml/image/ImageProperties" managed-name="Xamarin.Google.Android.Odml.Image.ImagePropertiesInvoker, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554444" />
+    <entry java-name="com/google/android/odml/image/MediaImageExtractor" managed-name="Xamarin.Google.Android.Odml.Image.MediaImageExtractor, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554445" />
+    <entry java-name="com/google/android/odml/image/MediaMlImageBuilder" managed-name="Xamarin.Google.Android.Odml.Image.MediaMlImageBuilder, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554446" />
+    <entry java-name="com/google/android/odml/image/MlImage" managed-name="Xamarin.Google.Android.Odml.Image.MlImage, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554447" />
+    <entry java-name="com/google/android/odml/image/MlImage$ImageFormat" managed-name="Xamarin.Google.Android.Odml.Image.MlImage+IImageFormat, Xamarin.Google.Android.ODML.Image" skip-in-java-to-managed="True" managed-type-token-id="33554449" />
+    <entry java-name="com/google/android/odml/image/MlImage$ImageFormat" managed-name="Xamarin.Google.Android.Odml.Image.MlImage+IImageFormatInvoker, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554450" />
+    <entry java-name="com/google/android/odml/image/MlImage$Internal" managed-name="Xamarin.Google.Android.Odml.Image.MlImage+Internal, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554451" />
+    <entry java-name="com/google/android/odml/image/MlImage$StorageType" managed-name="Xamarin.Google.Android.Odml.Image.MlImage+IStorageType, Xamarin.Google.Android.ODML.Image" skip-in-java-to-managed="True" managed-type-token-id="33554452" />
+    <entry java-name="com/google/android/odml/image/MlImage$StorageType" managed-name="Xamarin.Google.Android.Odml.Image.MlImage+IStorageTypeInvoker, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554453" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="com/google/android/odml/image/BitmapExtractor" managed-name="Xamarin.Google.Android.Odml.Image.BitmapExtractor, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554439" />
+    <entry java-name="com/google/android/odml/image/BitmapMlImageBuilder" managed-name="Xamarin.Google.Android.Odml.Image.BitmapMlImageBuilder, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554440" />
+    <entry java-name="com/google/android/odml/image/ByteBufferExtractor" managed-name="Xamarin.Google.Android.Odml.Image.ByteBufferExtractor, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554441" />
+    <entry java-name="com/google/android/odml/image/ByteBufferMlImageBuilder" managed-name="Xamarin.Google.Android.Odml.Image.ByteBufferMlImageBuilder, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554442" />
+    <entry java-name="com/google/android/odml/image/ImageProperties" managed-name="Xamarin.Google.Android.Odml.Image.ImageProperties, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554443" />
+    <entry java-name="com/google/android/odml/image/ImageProperties" managed-name="Xamarin.Google.Android.Odml.Image.ImagePropertiesInvoker, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554444" />
+    <entry java-name="com/google/android/odml/image/MediaImageExtractor" managed-name="Xamarin.Google.Android.Odml.Image.MediaImageExtractor, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554445" />
+    <entry java-name="com/google/android/odml/image/MediaMlImageBuilder" managed-name="Xamarin.Google.Android.Odml.Image.MediaMlImageBuilder, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554446" />
+    <entry java-name="com/google/android/odml/image/MlImage" managed-name="Xamarin.Google.Android.Odml.Image.MlImage, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554447" />
+    <entry java-name="com/google/android/odml/image/MlImage$ImageFormat" managed-name="Xamarin.Google.Android.Odml.Image.MlImage+IImageFormat, Xamarin.Google.Android.ODML.Image" skip-in-java-to-managed="True" managed-type-token-id="33554449" />
+    <entry java-name="com/google/android/odml/image/MlImage$ImageFormat" managed-name="Xamarin.Google.Android.Odml.Image.MlImage+IImageFormatInvoker, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554450" />
+    <entry java-name="com/google/android/odml/image/MlImage$Internal" managed-name="Xamarin.Google.Android.Odml.Image.MlImage+Internal, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554451" />
+    <entry java-name="com/google/android/odml/image/MlImage$StorageType" managed-name="Xamarin.Google.Android.Odml.Image.MlImage+IStorageType, Xamarin.Google.Android.ODML.Image" skip-in-java-to-managed="True" managed-type-token-id="33554452" />
+    <entry java-name="com/google/android/odml/image/MlImage$StorageType" managed-name="Xamarin.Google.Android.Odml.Image.MlImage+IStorageTypeInvoker, Xamarin.Google.Android.ODML.Image" managed-type-token-id="33554453" />
+  </managed-to-java>
+</api>

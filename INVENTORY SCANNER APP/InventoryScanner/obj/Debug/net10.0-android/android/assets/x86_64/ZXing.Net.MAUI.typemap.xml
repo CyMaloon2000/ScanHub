@@ -1,0 +1,10 @@
+<api type="debug" assembly-name="ZXing.Net.MAUI" mvid="6d2ebc9d64534728a87dd50abfb0caa1">
+  <java-to-managed>
+    <entry java-name="crc6477b0797571f03227/CameraManager_CameraResolutionFilter" managed-name="ZXing.Net.Maui.CameraManager+CameraResolutionFilter, ZXing.Net.MAUI" managed-type-token-id="33554471" />
+    <entry java-name="crc6477b0797571f03227/FrameAnalyzer" managed-name="ZXing.Net.Maui.FrameAnalyzer, ZXing.Net.MAUI" managed-type-token-id="33554461" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="crc6477b0797571f03227/CameraManager_CameraResolutionFilter" managed-name="ZXing.Net.Maui.CameraManager+CameraResolutionFilter, ZXing.Net.MAUI" managed-type-token-id="33554471" />
+    <entry java-name="crc6477b0797571f03227/FrameAnalyzer" managed-name="ZXing.Net.Maui.FrameAnalyzer, ZXing.Net.MAUI" managed-type-token-id="33554461" />
+  </managed-to-java>
+</api>

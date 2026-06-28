@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:InventoryScanner.ViewModels"
+             xmlns:models="clr-namespace:InventoryScanner.Models"
+             x:Class="InventoryScanner.Views.SessionListPage"
+             x:DataType="vm:SessionListViewModel"
+             Title="{Binding Title}">
+
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="*, Auto" Padding="0,0,16,0">
+            <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold"
+                   TextColor="White" VerticalOptions="Center"/>
+            <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                <ImageButton Command="{Binding OpenExportImportCommand}"
+                             BackgroundColor="Transparent" WidthRequest="40" HeightRequest="40"
+                             ToolTipProperties.Text="Export/Import">
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="⇄" Size="20" Color="White"/>
+                    </ImageButton.Source>
+                </ImageButton>
+            </HorizontalStackLayout>
+        </Grid>
+    </Shell.TitleView>
+
+    <Grid RowDefinitions="Auto, Auto, *" Padding="16,8">
+        <Border Grid.Row="0" Style="{StaticResource InventoryCard}" Padding="12,0" Margin="0,8" StrokeThickness="1.5">
+            <Grid ColumnDefinitions="*, Auto">
+                <Entry Text="{Binding SearchQuery}" Placeholder="Search sessions, buildings, locations..."
+                       PlaceholderColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+                       FontSize="14" ReturnType="Search"
+                       ReturnCommand="{Binding SearchCommand}"/>
+                <ImageButton Grid.Column="1" Command="{Binding SearchCommand}"
+                             BackgroundColor="Transparent" WidthRequest="40" HeightRequest="40">
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="⌕" Size="18" Color="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                    </ImageButton.Source>
+                </ImageButton>
+            </Grid>
+        </Border>
+
+        <ScrollView Grid.Row="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never"
+                    Margin="0,4,0,12">
+            <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding StatusFilters}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Border StrokeShape="RoundRectangle 16" Padding="16,8"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource ChipBgLight}, Dark={StaticResource ChipBgDark}}"
+                                Stroke="{AppThemeBinding Light={StaticResource CardBorderLight}, Dark={StaticResource CardBorderDark}}" StrokeThickness="1.5">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionListViewModel}}, Path=SearchCommand}"
+                                    Tapped="OnStatusFilterTapped"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="{Binding .}" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <RefreshView Grid.Row="2" Command="{Binding LoadSessionsCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Sessions}" SelectionMode="None" EmptyView="No sessions found. Tap '+' to create one.">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:InventorySession">
+                        <SwipeView Margin="0,0,0,12">
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Delete" BackgroundColor="{StaticResource Error}"
+                                               Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionListViewModel}}, Path=DeleteSessionCommand}"
+                                               CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
+                            <Border Style="{StaticResource InventoryCard}" Padding="16">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionListViewModel}}, Path=SelectSessionCommand}"
+                                        CommandParameter="{Binding .}"/>
+                                </Border.GestureRecognizers>
+
+                                <Grid RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="8">
+                                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                                        <Label Text="{Binding SessionName}" FontSize="16" FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+                                               LineBreakMode="TailTruncation" VerticalOptions="Center"/>
+                                        <Border Grid.Column="1" StrokeShape="RoundRectangle 8"
+                                                BackgroundColor="{Binding Status, Converter={StaticResource StatusToColorConverter}}"
+                                                StrokeThickness="0" Padding="10,4" VerticalOptions="Center">
+                                            <Label Text="{Binding Status}" FontSize="11" TextColor="White" FontAttributes="Bold"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <Label Grid.Row="1" Text="{Binding DisplayName}" FontSize="13"
+                                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+                                           LineBreakMode="TailTruncation"/>
+
+                                    <Grid Grid.Row="2" ColumnDefinitions="*, Auto" Margin="0,4,0,0">
+                                        <Label FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Scanned: " />
+                                                    <Span Text="{Binding ScanCount}" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+                                                    <Span Text=" items" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </Grid>
+
+                                    <Grid Grid.Row="3" ColumnDefinitions="*, Auto" Margin="0,2,0,0">
+                                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                            <Label Text="●" FontSize="10" VerticalOptions="Center" TextColor="{StaticResource Primary}"/>
+                                            <Label Text="Offline Saved" FontSize="11" TextColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}"/>
+                                        </HorizontalStackLayout>
+                                        <Label Grid.Column="1" Text="{Binding CreatedDate, StringFormat='Created {0:MMM dd, yyyy}'}"
+                                               FontSize="11" TextColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <ActivityIndicator Grid.Row="2" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                           Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+        <Button Grid.Row="2" Text="+" FontSize="28" FontAttributes="Bold"
+                Command="{Binding CreateSessionCommand}"
+                BackgroundColor="{StaticResource Accent}"
+                TextColor="White"
+                CornerRadius="28"
+                WidthRequest="56" HeightRequest="56"
+                HorizontalOptions="End" VerticalOptions="End"
+                Margin="0,0,8,16"
+                Shadow="{StaticResource FabShadow}"/>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:InventoryScanner.ViewModels"
+             x:Class="InventoryScanner.Views.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView Padding="20">
+        <VerticalStackLayout Spacing="16">
+
+            <!-- Page Title -->
+            <Label Text="Preferences" Style="{StaticResource TitleHeader}" Margin="0,4"/>
+
+            <!-- Theme Card -->
+            <Border Style="{StaticResource InventoryCard}" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="App Theme Mode" FontSize="15" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"/>
+                    
+                    <Label Text="Customize how the app interface looks on your device." FontSize="13"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                    
+                    <!-- Picker for theme selection -->
+                    <Border StrokeShape="RoundRectangle 8" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" Padding="8,0">
+                        <Picker ItemsSource="{Binding ThemeOptions}"
+                                SelectedItem="{Binding SelectedTheme}"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+                                FontSize="14"/>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Catalog Management Card -->
+            <Border Style="{StaticResource InventoryCard}" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Building / Location / Office" FontSize="15" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"/>
+
+                    <Label Text="Import or replace the local catalog used by session setup."
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+
+                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
+                        <Border StrokeShape="RoundRectangle 8"
+                                Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}"
+                                StrokeThickness="1" Padding="12,10">
+                            <Label Text="{Binding CatalogFilePath, TargetNullValue='No catalog file selected'}"
+                                   FontSize="13"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+                                   LineBreakMode="MiddleTruncation"/>
+                        </Border>
+                        <Button Grid.Column="1" Text="Browse" Command="{Binding PickCatalogFileCommand}"
+                                Style="{StaticResource OutlineButton}" HeightRequest="44"/>
+                    </Grid>
+
+                    <Button Text="Import Catalog"
+                            Command="{Binding ImportCatalogCommand}"
+                            Style="{StaticResource PrimaryButton}"
+                            HeightRequest="44"
+                            IsEnabled="{Binding IsCatalogImporting, Converter={StaticResource InverseBoolConverter}}"/>
+
+                    <ActivityIndicator IsRunning="{Binding IsCatalogImporting}" IsVisible="{Binding IsCatalogImporting}"
+                                       Color="{StaticResource Primary}" HeightRequest="24"/>
+
+                    <Label Text="{Binding CatalogStatusMessage}" FontSize="12"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+                           IsVisible="{Binding CatalogStatusMessage, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Diagnostics / System Info Card -->
+            <Border Style="{StaticResource InventoryCard}" Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="System Information" FontSize="15" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"/>
+                    
+                    <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="10" Margin="0,4,0,0">
+                        
+                        <!-- App Version -->
+                        <Label Grid.Row="0" Text="App Version" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="v1.0.0" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
+
+                        <!-- Storage Mode -->
+                        <Label Grid.Row="1" Text="Storage Type" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="Offline SQLite" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
+
+                        <!-- Diagnostics -->
+                        <Label Grid.Row="2" Text="Database Connection" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                        <Label Grid.Row="2" Grid.Column="1" Text="Connected" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource Success}"/>
+
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Danger Zone Card -->
+            <Border Style="{StaticResource InventoryCard}" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Delete Local Database" FontSize="15" FontAttributes="Bold"
+                           TextColor="{StaticResource Error}"/>
+
+                    <Label Text="Permanently delete all local catalog, session, scan, office, and user records from this device."
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+
+                    <Border StrokeShape="RoundRectangle 8"
+                            Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}"
+                            StrokeThickness="1"
+                            Padding="10,0">
+                        <Entry Text="{Binding DatabaseResetConfirmation}"
+                               Placeholder="Type CONFIRM"
+                               Keyboard="Text"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+                               PlaceholderColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}"/>
+                    </Border>
+
+                    <Button Text="Delete All Local Data"
+                            Command="{Binding ResetDatabaseCommand}"
+                            BackgroundColor="{StaticResource Error}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HeightRequest="44"
+                            CornerRadius="8"
+                            IsEnabled="{Binding IsDatabaseResetting, Converter={StaticResource InverseBoolConverter}}"/>
+
+                    <ActivityIndicator IsRunning="{Binding IsDatabaseResetting}"
+                                       IsVisible="{Binding IsDatabaseResetting}"
+                                       Color="{StaticResource Error}"
+                                       HeightRequest="24"/>
+
+                    <Label Text="{Binding DatabaseResetStatusMessage}"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+                           IsVisible="{Binding DatabaseResetStatusMessage, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Diagnostics Hint -->
+            <Label Text="Settings are applied instantly and saved on this device." FontSize="11"
+                   TextColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}"
+                   HorizontalTextAlignment="Center" Margin="0,8"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

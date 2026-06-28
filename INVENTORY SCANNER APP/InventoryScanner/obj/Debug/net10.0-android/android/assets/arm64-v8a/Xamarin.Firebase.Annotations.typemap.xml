@@ -1,0 +1,30 @@
+<api type="debug" assembly-name="Xamarin.Firebase.Annotations" mvid="ae572c4a10194301a84372a5d22104db">
+  <java-to-managed>
+    <entry java-name="com/google/firebase/annotations/DeferredApi" managed-name="Firebase.Annotations.IDeferredApi, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554439" />
+    <entry java-name="com/google/firebase/annotations/DeferredApi" managed-name="Firebase.Annotations.IDeferredApiInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554440" />
+    <entry java-name="com/google/firebase/annotations/PreviewApi" managed-name="Firebase.Annotations.IPreviewApi, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554441" />
+    <entry java-name="com/google/firebase/annotations/PreviewApi" managed-name="Firebase.Annotations.IPreviewApiInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554442" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Background" managed-name="Firebase.Annotations.Concurrent.IBackground, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554446" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Background" managed-name="Firebase.Annotations.Concurrent.IBackgroundInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554447" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Blocking" managed-name="Firebase.Annotations.Concurrent.IBlocking, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554448" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Blocking" managed-name="Firebase.Annotations.Concurrent.IBlockingInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554449" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Lightweight" managed-name="Firebase.Annotations.Concurrent.ILightweight, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554450" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Lightweight" managed-name="Firebase.Annotations.Concurrent.ILightweightInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554451" />
+    <entry java-name="com/google/firebase/annotations/concurrent/UiThread" managed-name="Firebase.Annotations.Concurrent.IUiThread, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554452" />
+    <entry java-name="com/google/firebase/annotations/concurrent/UiThread" managed-name="Firebase.Annotations.Concurrent.IUiThreadInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554453" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="com/google/firebase/annotations/DeferredApi" managed-name="Firebase.Annotations.IDeferredApi, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554439" />
+    <entry java-name="com/google/firebase/annotations/DeferredApi" managed-name="Firebase.Annotations.IDeferredApiInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554440" />
+    <entry java-name="com/google/firebase/annotations/PreviewApi" managed-name="Firebase.Annotations.IPreviewApi, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554441" />
+    <entry java-name="com/google/firebase/annotations/PreviewApi" managed-name="Firebase.Annotations.IPreviewApiInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554442" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Background" managed-name="Firebase.Annotations.Concurrent.IBackground, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554446" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Background" managed-name="Firebase.Annotations.Concurrent.IBackgroundInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554447" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Blocking" managed-name="Firebase.Annotations.Concurrent.IBlocking, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554448" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Blocking" managed-name="Firebase.Annotations.Concurrent.IBlockingInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554449" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Lightweight" managed-name="Firebase.Annotations.Concurrent.ILightweight, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554450" />
+    <entry java-name="com/google/firebase/annotations/concurrent/Lightweight" managed-name="Firebase.Annotations.Concurrent.ILightweightInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554451" />
+    <entry java-name="com/google/firebase/annotations/concurrent/UiThread" managed-name="Firebase.Annotations.Concurrent.IUiThread, Xamarin.Firebase.Annotations" skip-in-java-to-managed="True" managed-type-token-id="33554452" />
+    <entry java-name="com/google/firebase/annotations/concurrent/UiThread" managed-name="Firebase.Annotations.Concurrent.IUiThreadInvoker, Xamarin.Firebase.Annotations" managed-type-token-id="33554453" />
+  </managed-to-java>
+</api>

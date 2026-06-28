@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:InventoryScanner.ViewModels"
+             xmlns:models="clr-namespace:InventoryScanner.Models"
+             x:Class="InventoryScanner.Views.ScanHistoryPage"
+             x:DataType="vm:ScanHistoryViewModel"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto, Auto, *" Padding="16,8">
+
+        <!-- Search & Count Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,8">
+            <Border Style="{StaticResource InventoryCard}" StrokeThickness="1.5" Padding="12,0">
+                <Grid ColumnDefinitions="*, Auto">
+                    <Entry Text="{Binding SearchQuery}" Placeholder="Search scanned items..."
+                           PlaceholderColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" FontSize="14"
+                           ReturnType="Search" ReturnCommand="{Binding SearchCommand}"/>
+                    <ImageButton Grid.Column="1" Command="{Binding SearchCommand}"
+                                 BackgroundColor="Transparent" WidthRequest="40" HeightRequest="40">
+                        <ImageButton.Source>
+                            <FontImageSource Glyph="⌕" Size="18" Color="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                        </ImageButton.Source>
+                    </ImageButton>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="1" StrokeShape="RoundRectangle 12" BackgroundColor="{StaticResource Primary}"
+                    StrokeThickness="0" Padding="14,10" Margin="8,0,0,0">
+                <Label Text="{Binding TotalCount, StringFormat='{0}'}" FontSize="16"
+                       FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" VerticalOptions="Center"/>
+            </Border>
+        </Grid>
+
+        <!-- Clear All Button -->
+        <HorizontalStackLayout Grid.Row="1" Spacing="8" Margin="0,4,0,8" HorizontalOptions="End">
+            <Button Text="Clear All" Command="{Binding ClearAllCommand}"
+                    BackgroundColor="{StaticResource Error}" TextColor="White"
+                    FontSize="12" CornerRadius="8" Padding="12,6"
+                    HeightRequest="36"
+                    IsVisible="{Binding IsEmpty, Converter={StaticResource InverseBoolConverter}}"/>
+        </HorizontalStackLayout>
+
+        <!-- Scan Items List -->
+        <RefreshView Grid.Row="2" Command="{Binding LoadHistoryCommand}"
+                      IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding ScannedItems}"
+                             SelectionMode="None"
+                             EmptyView="No scanned items yet.">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ScannedItem">
+                        <SwipeView Margin="0,0,0,8">
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Delete" BackgroundColor="{StaticResource Error}"
+                                               Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ScanHistoryViewModel}}, Path=DeleteItemCommand}"
+                                               CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
+                            <Border Style="{StaticResource InventoryCard}" Padding="14,12">
+                                <Grid ColumnDefinitions="Auto, *" ColumnSpacing="12">
+                                    <!-- Barcode Icon -->
+                                    <Border StrokeShape="RoundRectangle 10" BackgroundColor="{StaticResource Primary}"
+                                            StrokeThickness="0" WidthRequest="44" HeightRequest="44"
+                                            VerticalOptions="Center">
+                                        <Label Text="⛶" TextColor="White" FontSize="20" HorizontalOptions="Center"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+
+                                    <!-- Item Info -->
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                        <Label Text="{Binding UniqueIdentifier}" FontSize="15" FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" LineBreakMode="TailTruncation"/>
+                                        <HorizontalStackLayout Spacing="12">
+                                            <Label Text="{Binding BarcodeType}" FontSize="12"
+                                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                                            <Label Text="{Binding ScannedAt, StringFormat='{0:MMM dd, HH:mm:ss}'}"
+                                                   FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}"/>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Loading -->
+        <ActivityIndicator Grid.Row="2" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                           Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center"/>
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,61 @@
+{
+  "buildings": [
+    {
+      "buildingId": 1,
+      "buildingName": "CyberTower"
+    },
+    {
+      "buildingId": 2,
+      "buildingName": "Bulacao"
+    }
+  ],
+  "locations": [
+    {
+      "locationId": 1,
+      "locationName": "UG",
+      "buildingId": 1
+    },
+    {
+      "locationId": 2,
+      "locationName": "1st Floor",
+      "buildingId": 1
+    },
+    {
+      "locationId": 3,
+      "locationName": "2nd Floor",
+      "buildingId": 2
+    }
+  ],
+  "rooms": [
+    {
+      "roomId": 1,
+      "roomName": "Room 101",
+      "locationId": 1
+    },
+    {
+      "roomId": 2,
+      "roomName": "Computer Lab",
+      "locationId": 1
+    },
+    {
+      "roomId": 3,
+      "roomName": "Conference Room",
+      "locationId": 2
+    },
+    {
+      "roomId": 4,
+      "roomName": "Records Room",
+      "locationId": 3
+    }
+  ],
+  "offices": [
+    {
+      "officeId": 1,
+      "officeName": "Cashier"
+    },
+    {
+      "officeId": 2,
+      "officeName": "SDO OFFICE"
+    }
+  ]
+}

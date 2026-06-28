@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 34px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 16px Arial, sans-serif; fill: #475569; }
+      .table { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 14; }
+      .header { fill: #0f766e; }
+      .headerText { font: 700 18px Arial, sans-serif; fill: #ffffff; }
+      .col { font: 400 15px Arial, sans-serif; fill: #334155; }
+      .pk { font: 700 15px Arial, sans-serif; fill: #0f172a; }
+      .fk { font: 700 15px Arial, sans-serif; fill: #0369a1; }
+      .rel { stroke: #64748b; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .relLabel { font: 700 13px Arial, sans-serif; fill: #475569; }
+      .note { font: 400 14px Arial, sans-serif; fill: #64748b; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1600" height="1200"/>
+  <text x="80" y="70" class="title">Inventory Scanner Database Schema</text>
+  <text x="80" y="100" class="subtitle">Building -> Location -> Room hierarchy with ScannedItem linked to InventoryScanSession by SessionId</text>
+
+  <!-- Building -->
+  <g transform="translate(80 160)">
+    <rect class="table" width="300" height="155"/>
+    <path class="header" d="M14,0 H286 Q300,0 300,14 V48 H0 V14 Q0,0 14,0 Z"/>
+    <text x="20" y="31" class="headerText">Building</text>
+    <text x="20" y="78" class="pk">PK BuildingId INTEGER</text>
+    <text x="20" y="106" class="col">BuildingName TEXT NOT NULL</text>
+  </g>
+
+  <!-- Location -->
+  <g transform="translate(510 140)">
+    <rect class="table" width="330" height="185"/>
+    <path class="header" d="M14,0 H316 Q330,0 330,14 V48 H0 V14 Q0,0 14,0 Z"/>
+    <text x="20" y="31" class="headerText">Location</text>
+    <text x="20" y="78" class="pk">PK LocationId INTEGER</text>
+    <text x="20" y="106" class="col">LocationName TEXT NOT NULL</text>
+    <text x="20" y="134" class="fk">FK BuildingId INTEGER NOT NULL</text>
+  </g>
+
+  <!-- Room -->
+  <g transform="translate(970 140)">
+    <rect class="table" width="330" height="185"/>
+    <path class="header" d="M14,0 H316 Q330,0 330,14 V48 H0 V14 Q0,0 14,0 Z"/>
+    <text x="20" y="31" class="headerText">Room</text>
+    <text x="20" y="78" class="pk">PK RoomId INTEGER</text>
+    <text x="20" y="106" class="col">RoomName TEXT NOT NULL</text>
+    <text x="20" y="134" class="fk">FK LocationId INTEGER NOT NULL</text>
+  </g>
+
+  <!-- Office -->
+  <g transform="translate(80 460)">
+    <rect class="table" width="300" height="155"/>
+    <path class="header" d="M14,0 H286 Q300,0 300,14 V48 H0 V14 Q0,0 14,0 Z"/>
+    <text x="20" y="31" class="headerText">Office</text>
+    <text x="20" y="78" class="pk">PK OfficeId INTEGER</text>
+    <text x="20" y="106" class="col">OfficeName TEXT NOT NULL</text>
+  </g>
+
+  <!-- InventoryScanSession -->
+  <g transform="translate(510 430)">
+    <rect class="table" width="390" height="365"/>
+    <path class="header" d="M14,0 H376 Q390,0 390,14 V48 H0 V14 Q0,0 14,0 Z"/>
+    <text x="20" y="31" class="headerText">InventoryScanSession</text>
+    <text x="20" y="78" class="pk">PK SessionId INTEGER</text>
+    <text x="20" y="106" class="col">SessionName TEXT</text>
+    <text x="20" y="134" class="fk">FK BuildingId INTEGER NOT NULL</text>
+    <text x="20" y="162" class="fk">FK LocationId INTEGER NOT NULL</text>
+    <text x="20" y="190" class="fk">FK RoomId INTEGER NOT NULL</text>
+    <text x="20" y="218" class="fk">FK OfficeId INTEGER NULL</text>
+    <text x="20" y="246" class="col">Description TEXT</text>
+    <text x="20" y="274" class="col">Status TEXT NOT NULL</text>
+    <text x="20" y="302" class="col">CreatedBy TEXT</text>
+    <text x="20" y="330" class="col">CreatedDate DATETIME</text>
+    <text x="20" y="358" class="col">UpdatedDate DATETIME</text>
+  </g>
+
+  <!-- ScannedItem -->
+  <g transform="translate(1010 430)">
+    <rect class="table" width="410" height="285"/>
+    <path class="header" d="M14,0 H396 Q410,0 410,14 V48 H0 V14 Q0,0 14,0 Z"/>
+    <text x="20" y="31" class="headerText">ScannedItem</text>
+    <text x="20" y="78" class="pk">PK ScanId INTEGER</text>
+    <text x="20" y="106" class="fk">FK SessionId INTEGER NOT NULL</text>
+    <text x="20" y="134" class="col">UniqueIdentifier TEXT NOT NULL</text>
+    <text x="20" y="162" class="col">BarcodeType TEXT</text>
+    <text x="20" y="190" class="col">ScannedAt DATETIME</text>
+    <text x="20" y="218" class="col">Remarks TEXT</text>
+    <text x="20" y="246" class="col">Status TEXT</text>
+  </g>
+
+  <!-- User -->
+  <g transform="translate(80 820)">
+    <rect class="table" width="350" height="245"/>
+    <path class="header" d="M14,0 H336 Q350,0 350,14 V48 H0 V14 Q0,0 14,0 Z"/>
+    <text x="20" y="31" class="headerText">User</text>
+    <text x="20" y="78" class="pk">PK UserId INTEGER</text>
+    <text x="20" y="106" class="col">Username TEXT NOT NULL</text>
+    <text x="20" y="134" class="col">PasswordHash TEXT NOT NULL</text>
+    <text x="20" y="162" class="col">Salt TEXT NOT NULL</text>
+    <text x="20" y="190" class="col">DisplayName TEXT NOT NULL</text>
+    <text x="20" y="218" class="col">CreatedDate DATETIME</text>
+  </g>
+
+  <!-- Indexes note -->
+  <g transform="translate(510 860)">
+    <rect class="table" width="910" height="205"/>
+    <path class="header" d="M14,0 H896 Q910,0 910,14 V48 H0 V14 Q0,0 14,0 Z"/>
+    <text x="20" y="31" class="headerText">Indexes and Rules</text>
+    <text x="20" y="80" class="note">FOREIGN KEY: ScannedItem.SessionId references InventoryScanSession.SessionId ON DELETE CASCADE</text>
+    <text x="20" y="110" class="note">UNIQUE INDEX: ScannedItem(SessionId, UniqueIdentifier)</text>
+    <text x="20" y="140" class="note">Lookup indexes: ScannedItem.SessionId, ScannedItem.UniqueIdentifier, Location.BuildingId, Room.LocationId</text>
+    <text x="20" y="170" class="note">Session scope indexes: InventoryScanSession.BuildingId, LocationId, RoomId, OfficeId</text>
+  </g>
+
+  <!-- Relationships -->
+  <path class="rel" d="M380 238 C430 238, 460 232, 510 232"/>
+  <text x="410" y="215" class="relLabel">1 to many</text>
+
+  <path class="rel" d="M840 232 C890 232, 920 232, 970 232"/>
+  <text x="870" y="210" class="relLabel">1 to many</text>
+
+  <path class="rel" d="M705 325 C705 365, 705 390, 705 430"/>
+  <text x="720" y="382" class="relLabel">session scope</text>
+
+  <path class="rel" d="M1135 325 C1135 365, 1165 390, 1165 430"/>
+  <text x="1180" y="382" class="relLabel">session room</text>
+
+  <path class="rel" d="M380 535 C430 535, 460 610, 510 610"/>
+  <text x="395" y="575" class="relLabel">optional</text>
+
+  <path class="rel" d="M900 610 C950 610, 960 610, 1010 610"/>
+  <text x="925" y="588" class="relLabel">has scans</text>
+
+  <path class="rel" d="M380 238 C455 238, 420 540, 510 565"/>
+  <path class="rel" d="M840 232 C920 245, 940 545, 1010 565"/>
+  <path class="rel" d="M1300 232 C1450 245, 1500 545, 1420 565"/>
+</svg>

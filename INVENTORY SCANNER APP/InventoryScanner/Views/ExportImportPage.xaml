@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:InventoryScanner.ViewModels"
+             xmlns:models="clr-namespace:InventoryScanner.Models"
+             x:Class="InventoryScanner.Views.ExportImportPage"
+             x:DataType="vm:ExportImportViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView Padding="16">
+        <VerticalStackLayout Spacing="16">
+
+            <!-- Export Section -->
+            <Border Style="{StaticResource InventoryCard}" Padding="20">
+                <VerticalStackLayout Spacing="14">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="📤" FontSize="22"/>
+                        <Label Text="Export Data" FontSize="20" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Format Selection -->
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Export Format" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                        <Border StrokeShape="RoundRectangle 8" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" Padding="8,2">
+                            <Picker ItemsSource="{Binding Formats}"
+                                    SelectedItem="{Binding SelectedFormat}"
+                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" FontSize="14"/>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Export All Toggle -->
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Label Text="Export all sessions" FontSize="14"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" VerticalOptions="Center"/>
+                        <Switch Grid.Column="1" IsToggled="{Binding ExportAll}"
+                                OnColor="{StaticResource Primary}"/>
+                    </Grid>
+
+                    <!-- Session Selection (when not exporting all) -->
+                    <VerticalStackLayout Spacing="8"
+                                         IsVisible="{Binding ExportAll, Converter={StaticResource InverseBoolConverter}}">
+                        <Label Text="Select Sessions to Export" FontSize="13"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                        <CollectionView ItemsSource="{Binding AvailableSessions}"
+                                        SelectionMode="Multiple"
+                                        SelectedItems="{Binding SelectedSessions}"
+                                        HeightRequest="200">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:InventorySession">
+                                    <Border StrokeShape="RoundRectangle 8" BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}"
+                                            Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}" StrokeThickness="1" Padding="12,8"
+                                            Margin="0,2">
+                                        <Grid ColumnDefinitions="*, Auto">
+                                            <VerticalStackLayout>
+                                                <Label Text="{Binding DisplayName}" FontSize="14" FontAttributes="Bold"
+                                                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"/>
+                                                <Label Text="{Binding Description, TargetNullValue=''}" FontSize="12"
+                                                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding ScanCount, StringFormat='{0} items'}" FontSize="12"
+                                                   TextColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}" VerticalOptions="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
+                    <!-- Export Status -->
+                    <Label Text="{Binding ExportStatusMessage}" FontSize="13"
+                           TextColor="{Binding ExportSuccess, Converter={StaticResource BoolToSuccessColorConverter}}"
+                           IsVisible="{Binding ExportStatusMessage, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                    <!-- Export Button -->
+                    <Button Text="Export" Command="{Binding ExportCommand}"
+                            IsEnabled="{Binding IsExporting, Converter={StaticResource InverseBoolConverter}}"
+                            Style="{StaticResource PrimaryButton}"/>
+
+                    <ActivityIndicator IsRunning="{Binding IsExporting}" IsVisible="{Binding IsExporting}"
+                                       Color="{StaticResource Primary}" HeightRequest="30"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Import Section -->
+            <Border Style="{StaticResource InventoryCard}" Padding="20">
+                <VerticalStackLayout Spacing="14">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="📥" FontSize="22"/>
+                        <Label Text="Import Data" FontSize="20" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <Label Text="Import sessions and scanned items from a JSON export file."
+                           FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+
+                    <!-- File Selection -->
+                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
+                        <Border StrokeShape="RoundRectangle 8" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" Padding="12,10">
+                            <Label Text="{Binding ImportFilePath, TargetNullValue='No file selected'}"
+                                   FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+                                   LineBreakMode="MiddleTruncation"/>
+                        </Border>
+                        <Button Grid.Column="1" Text="Browse" Command="{Binding PickImportFileCommand}"
+                                BackgroundColor="{StaticResource Primary}" TextColor="White"
+                                FontSize="13" CornerRadius="8" Padding="14,8"/>
+                    </Grid>
+
+                    <!-- Import Status -->
+                    <Label Text="{Binding ImportStatusMessage}" FontSize="13"
+                           TextColor="{Binding ImportSuccess, Converter={StaticResource BoolToSuccessColorConverter}}"
+                           IsVisible="{Binding ImportStatusMessage, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                    <!-- Import Button -->
+                    <Button Text="Import" Command="{Binding ImportCommand}"
+                            IsEnabled="{Binding IsImporting, Converter={StaticResource InverseBoolConverter}}"
+                            Style="{StaticResource AccentButton}"/>
+
+                    <ActivityIndicator IsRunning="{Binding IsImporting}" IsVisible="{Binding IsImporting}"
+                                       Color="{StaticResource Accent}" HeightRequest="30"/>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

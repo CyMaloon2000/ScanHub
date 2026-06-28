@@ -1,0 +1,6 @@
+<api>
+  <acw-types partial-assembly-name="Xamarin.Google.MLKit.Vision.Interfaces" module-name="Xamarin.Google.MLKit.Vision.Interfaces.dll">
+    <type assembly-qualified-name="Xamarin.Google.MLKit.Vision.Interfaces.IDetectorDetectorType, Xamarin.Google.MLKit.Vision.Interfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="com.google.mlkit.vision.interfaces.Detector$DetectorType" java-key="com.google.mlkit.vision.interfaces.Detector$DetectorType" managed-key="Xamarin.Google.MLKit.Vision.Interfaces.IDetectorDetectorType" partial-assembly-qualified-name="Xamarin.Google.MLKit.Vision.Interfaces.IDetectorDetectorType, Xamarin.Google.MLKit.Vision.Interfaces" />
+    <type assembly-qualified-name="Xamarin.Google.MLKit.Vision.Interfaces.IDetector, Xamarin.Google.MLKit.Vision.Interfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="com.google.mlkit.vision.interfaces.Detector" java-key="com.google.mlkit.vision.interfaces.Detector" managed-key="Xamarin.Google.MLKit.Vision.Interfaces.IDetector" partial-assembly-qualified-name="Xamarin.Google.MLKit.Vision.Interfaces.IDetector, Xamarin.Google.MLKit.Vision.Interfaces" />
+  </acw-types>
+</api>

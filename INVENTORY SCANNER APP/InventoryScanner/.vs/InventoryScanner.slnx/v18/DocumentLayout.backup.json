@@ -1,0 +1,103 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DC46230C-79D9-4E09-6979-CEF3568D6A78}|InventoryScanner.csproj|c:\\users\\sdo05\\desktop\\inventory scanner app\\inventoryscanner\\services\\sessionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DC46230C-79D9-4E09-6979-CEF3568D6A78}|InventoryScanner.csproj|solutionrelative:services\\sessionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC46230C-79D9-4E09-6979-CEF3568D6A78}|InventoryScanner.csproj|c:\\users\\sdo05\\desktop\\inventory scanner app\\inventoryscanner\\services\\export\\exportimportservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DC46230C-79D9-4E09-6979-CEF3568D6A78}|InventoryScanner.csproj|solutionrelative:services\\export\\exportimportservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC46230C-79D9-4E09-6979-CEF3568D6A78}|InventoryScanner.csproj|c:\\users\\sdo05\\desktop\\inventory scanner app\\inventoryscanner\\viewmodels\\scannerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DC46230C-79D9-4E09-6979-CEF3568D6A78}|InventoryScanner.csproj|solutionrelative:viewmodels\\scannerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC46230C-79D9-4E09-6979-CEF3568D6A78}|InventoryScanner.csproj|c:\\users\\sdo05\\desktop\\inventory scanner app\\inventoryscanner\\services\\scannerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DC46230C-79D9-4E09-6979-CEF3568D6A78}|InventoryScanner.csproj|solutionrelative:services\\scannerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC46230C-79D9-4E09-6979-CEF3568D6A78}|InventoryScanner.csproj|c:\\users\\sdo05\\desktop\\inventory scanner app\\inventoryscanner\\models\\location.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DC46230C-79D9-4E09-6979-CEF3568D6A78}|InventoryScanner.csproj|solutionrelative:models\\location.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SessionService.cs",
+              "DocumentMoniker": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\Services\\SessionService.cs",
+              "RelativeDocumentMoniker": "Services\\SessionService.cs",
+              "ToolTip": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\Services\\SessionService.cs",
+              "RelativeToolTip": "Services\\SessionService.cs",
+              "ViewState": "AgIAANQAAAAAAAAAAAAAwOEAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-26T08:06:05.419Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ScannerViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\ViewModels\\ScannerViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\ScannerViewModel.cs",
+              "ToolTip": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\ViewModels\\ScannerViewModel.cs",
+              "RelativeToolTip": "ViewModels\\ScannerViewModel.cs",
+              "ViewState": "AgIAAG4AAAAAAAAAAAAwwHkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-19T08:25:29.805Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ScannerService.cs",
+              "DocumentMoniker": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\Services\\ScannerService.cs",
+              "RelativeDocumentMoniker": "Services\\ScannerService.cs",
+              "ToolTip": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\Services\\ScannerService.cs",
+              "RelativeToolTip": "Services\\ScannerService.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-19T08:25:18.478Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ExportImportServices.cs",
+              "DocumentMoniker": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\Services\\Export\\ExportImportServices.cs",
+              "RelativeDocumentMoniker": "Services\\Export\\ExportImportServices.cs",
+              "ToolTip": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\Services\\Export\\ExportImportServices.cs",
+              "RelativeToolTip": "Services\\Export\\ExportImportServices.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAIwD0AAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-18T06:58:11.287Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Location.cs",
+              "DocumentMoniker": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\Models\\Location.cs",
+              "RelativeDocumentMoniker": "Models\\Location.cs",
+              "ToolTip": "C:\\Users\\SDO05\\Desktop\\INVENTORY SCANNER APP\\InventoryScanner\\Models\\Location.cs",
+              "RelativeToolTip": "Models\\Location.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-18T06:58:09.355Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

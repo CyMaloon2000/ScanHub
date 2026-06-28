@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:InventoryScanner.ViewModels"
+             x:Class="InventoryScanner.Views.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.FlyoutBehavior="Disabled">
+
+    <Grid RowDefinitions="*, Auto, *" Padding="24">
+
+        <!-- Logo / Branding -->
+        <VerticalStackLayout Grid.Row="0" VerticalOptions="End" HorizontalOptions="Center" Spacing="8" Padding="0,0,0,24">
+            <Border StrokeShape="RoundRectangle 40" BackgroundColor="{StaticResource Primary}"
+                    HeightRequest="80" WidthRequest="80" HorizontalOptions="Center"
+                    StrokeThickness="0">
+                <Label Text="⛶" TextColor="White" FontSize="40" HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Border>
+            <Label Text="Inventory Scanner" FontSize="28" FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" HorizontalTextAlignment="Center"/>
+            <Label Text="Offline Inventory Validation System" FontSize="14"
+                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" HorizontalTextAlignment="Center"/>
+        </VerticalStackLayout>
+
+        <!-- Login Card -->
+        <Border Grid.Row="1" Style="{StaticResource InventoryCard}" Padding="24">
+            <VerticalStackLayout Spacing="16">
+
+                <Label Text="Sign In" FontSize="20" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" HorizontalTextAlignment="Center"/>
+
+                <!-- Error Message -->
+                <Border IsVisible="{Binding HasError}" BackgroundColor="#33EF4444"
+                        StrokeShape="RoundRectangle 8" StrokeThickness="0" Padding="12">
+                    <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource Error}" FontSize="13"
+                           HorizontalTextAlignment="Center"/>
+                </Border>
+
+                <!-- Username -->
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Username" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                    <Border StrokeShape="RoundRectangle 10" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" Padding="8,2">
+                        <Entry Text="{Binding Username}" Placeholder="Enter username"
+                               PlaceholderColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+                               FontSize="15" Keyboard="Plain"
+                               ReturnType="Next"/>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Password -->
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Password" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                    <Border StrokeShape="RoundRectangle 10" Stroke="{AppThemeBinding Light={StaticResource EntryBorderLight}, Dark={StaticResource EntryBorderDark}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource EntryBgLight}, Dark={StaticResource EntryBgDark}}" StrokeThickness="1" Padding="8,2">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Entry Text="{Binding Password}" Placeholder="Enter password"
+                                   PlaceholderColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+                                   IsPassword="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolConverter}}"
+                                   FontSize="15" ReturnType="Go"
+                                   ReturnCommand="{Binding LoginCommand}"/>
+                            <ImageButton Grid.Column="1" WidthRequest="36" HeightRequest="36"
+                                         Command="{Binding TogglePasswordVisibilityCommand}"
+                                         BackgroundColor="Transparent">
+                                <ImageButton.Source>
+                                    <FontImageSource Glyph="⊙" Size="18"
+                                                     Color="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"/>
+                                </ImageButton.Source>
+                            </ImageButton>
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Login Button -->
+                <Button Text="{Binding IsBusy, Converter={StaticResource BoolToLoginTextConverter}}"
+                        Command="{Binding LoginCommand}"
+                        IsEnabled="{Binding IsNotBusy}"
+                        Style="{StaticResource PrimaryButton}"
+                        Margin="0,8,0,0"/>
+
+                <!-- Default Credentials Hint -->
+                <Label Text="Default: admin / Admin@123" FontSize="11"
+                       TextColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}" HorizontalTextAlignment="Center"
+                       Opacity="0.7"/>
+
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Footer -->
+        <Label Grid.Row="2" Text="v1.0 • Fully Offline" FontSize="11"
+               TextColor="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}" HorizontalTextAlignment="Center"
+               VerticalOptions="End" Margin="0,0,0,16"/>
+    </Grid>
+
+</ContentPage>

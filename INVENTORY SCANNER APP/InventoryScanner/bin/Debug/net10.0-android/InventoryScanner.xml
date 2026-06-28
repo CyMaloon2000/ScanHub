@@ -1,0 +1,1883 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>InventoryScanner</name>
+    </assembly>
+    <members>
+        <member name="T:InventoryScanner.Converters.StatusToColorConverter">
+            <summary>
+            Converts session status string to a corresponding color.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Converters.BoolToVisibilityConverter">
+            <summary>
+            Converts boolean to visibility (true = Visible, false = Collapsed).
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Converters.InverseBoolConverter">
+            <summary>
+            Inverts a boolean value.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Converters.CountToVisibilityConverter">
+            <summary>
+            Converts a count to a visibility boolean (count > 0 = true).
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Converters.BoolToScanTextConverter">
+            <summary>
+            Converts scanning boolean to button text (true = "⏸" pause, false = "▶" play).
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Converters.BoolToScanColorConverter">
+            <summary>
+            Converts scanning boolean to button color (true = red/stop, false = green/go).
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Converters.BoolToLoginTextConverter">
+            <summary>
+            Converts busy boolean to login button text.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Converters.BoolToSuccessColorConverter">
+            <summary>
+            Converts success boolean to color (true = green, false = orange).
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Helpers.Constants">
+            <summary>
+            Application-wide constants.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Helpers.FlyoutNavigationHelper">
+            <summary>
+            Synchronizes page startup work with Shell flyout animation state.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Helpers.SecurityHelper">
+            <summary>
+            Provides cryptographic helper methods for password hashing and verification.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Helpers.SecurityHelper.GenerateSalt">
+            <summary>
+            Generates a cryptographically secure random salt.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Helpers.SecurityHelper.HashPassword(System.String,System.String)">
+            <summary>
+            Hashes a password using PBKDF2 with the given salt.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Helpers.SecurityHelper.VerifyPassword(System.String,System.String,System.String)">
+            <summary>
+            Verifies a password against a stored hash and salt.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Helpers.SecurityHelper.GenerateSessionToken">
+            <summary>
+            Generates a secure session token.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Helpers.ValidationHelper">
+            <summary>
+            Provides input validation helper methods.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Helpers.ValidationHelper.IsNotEmpty(System.String)">
+            <summary>
+            Validates that a string is not null, empty, or whitespace.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Helpers.ValidationHelper.IsValidBarcode(System.String)">
+            <summary>
+            Validates that a barcode/QR value is acceptable.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Helpers.ValidationHelper.ValidateSession(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Validates that the normalized inventory scope has the required selections.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Helpers.ValidationHelper.ValidateLogin(System.String,System.String)">
+            <summary>
+            Validates login credentials format.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Helpers.ValidationHelper.BarcodeRegex">
+            <remarks>
+            Pattern:<br/>
+            <code>^[a-zA-Z0-9\\-\\._:;/\\\\+=#\\$%&amp;\\*\\?!@\\(\\)\\[\\]\\{\\}\\|~`,&lt;&gt;^' ]+$</code><br/>
+            Explanation:<br/>
+            <code>
+            ○ Match if at the beginning of the string.<br/>
+            ○ Match a character in the set [ !#-~] atomically at least once.<br/>
+            ○ Match if at the end of the string or if before an ending newline.<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="T:InventoryScanner.Models.AppState">
+            <summary>
+            Represents the possible application states.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.ScanCompletedEvent">
+            <summary>
+            Event raised when a barcode/QR code is successfully scanned.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.SessionUpdatedEvent">
+            <summary>
+            Event raised when a session is created or updated.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.DataTransferEvent">
+            <summary>
+            Event raised when import or export completes.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.SetupCompletedEvent">
+            <summary>
+            Event raised when initial setup catalogs are imported.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.AuthStateChangedEvent">
+            <summary>
+            Event raised when authentication state changes.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.ExportData">
+            <summary>
+            Data transfer object used for import/export operations.
+            Contains complete session data with associated scanned items.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.SessionExportItem">
+            <summary>
+            Represents a single session with its scanned items for export.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.InventorySession">
+            <summary>
+            Represents a normalized inventory scan session tied to a building, location, and optional office.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.Models.InventorySession.ScanCount">
+            <summary>
+            Not stored in DB - populated at runtime for display.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.Models.InventorySession.ExpectedCount">
+            <summary>
+            Total expected items in this room.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.Models.InventorySession.ScanProgress">
+            <summary>
+            Not stored in DB - progress value (0 to 1) for ProgressBar.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.Models.InventorySession.MissingCount">
+            <summary>
+            Not stored in DB - count of missing items.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.Models.InventorySession.DisplayName">
+            <summary>
+            Human readable label for lists and scan headers.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.SessionStatus">
+            <summary>
+            Constants for inventory session status values.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.ScannedItem">
+            <summary>
+            Represents a single scanned barcode/QR code item within an inventory session.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.SessionScanCount">
+            <summary>
+            Projection for grouped scan counts by session.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Models.User">
+            <summary>
+            Represents a user account for offline authentication.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Platforms.Android.DeviceFileSaveService">
+            <summary>
+            Saves files to the public Downloads collection using Android scoped storage.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Repositories.Interfaces.IScannedItemRepository">
+            <summary>
+            Repository interface for scanned item data access.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Repositories.Interfaces.ISessionRepository">
+            <summary>
+            Repository interface for inventory session data access.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Repositories.Interfaces.IUserRepository">
+            <summary>
+            Repository interface for user data access.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Repositories.ScannedItemRepository">
+            <summary>
+            SQLite implementation of the scanned item repository.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Repositories.SessionRepository">
+            <summary>
+            SQLite implementation of the session repository.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Repositories.UserRepository">
+            <summary>
+            SQLite implementation of the user repository.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.AuthenticationService">
+            <summary>
+            Handles offline authentication using locally stored credentials.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Services.AuthenticationService.LoginAsync(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.Services.AuthenticationService.LogoutAsync">
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.Services.AuthenticationService.IsAuthenticatedAsync">
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.Services.AuthenticationService.GetCurrentUsernameAsync">
+            <inheritdoc/>
+        </member>
+        <member name="T:InventoryScanner.Services.DatabaseService">
+            <summary>
+            Manages SQLite database initialization, connection, and schema management.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.Services.DatabaseService.DatabasePath">
+            <summary>
+            Gets the database file path.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Services.DatabaseService.GetConnectionAsync">
+            <summary>
+            Gets the SQLite connection, initializing if needed.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Services.DatabaseService.SeedDefaultAdminAsync">
+            <summary>
+            Seeds the default admin user if no users exist.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Services.DatabaseService.CloseAsync">
+            <summary>
+            Closes the database connection.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.EventAggregator">
+            <summary>
+            Thread-safe publish/subscribe event aggregator for decoupled communication.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Services.EventAggregator.Subscribe``1(System.Action{``0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.Services.EventAggregator.Unsubscribe``1(System.Action{``0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.Services.EventAggregator.Publish``1(``0)">
+            <inheritdoc/>
+        </member>
+        <member name="T:InventoryScanner.Services.ExportService">
+            <summary>
+            Handles exporting inventory session data using configurable format strategies.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Services.ExportService.ExportSessionsAsync(System.Collections.Generic.List{System.Int32},System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.Services.ExportService.ExportAllSessionsAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.Services.ExportService.GetSupportedFormats">
+            <inheritdoc/>
+        </member>
+        <member name="T:InventoryScanner.Services.ImportService">
+            <summary>
+            Handles importing inventory session data from JSON files.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Services.ImportService.ImportAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.Services.ImportService.ValidateImportFileAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:InventoryScanner.Services.Export.IExportStrategy">
+            <summary>
+            Defines the contract for export format strategies.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Export.CsvExportStrategy">
+            <summary>
+            Exports inventory data to CSV format.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Export.JsonExportStrategy">
+            <summary>
+            Exports inventory data to JSON format.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Export.TextExportStrategy">
+            <summary>
+            Exports inventory data to a plain-text tabular format (no external dependency needed).
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Export.ExportStrategyFactory">
+            <summary>
+            Factory for creating export strategies based on format selection.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Interfaces.IAuthenticationService">
+            <summary>
+            Interface for offline authentication operations.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Interfaces.IDatabaseService">
+            <summary>
+            Interface for database initialization and connection management.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Interfaces.IDeviceFileSaveService">
+            <summary>
+            Saves app-generated files into user-accessible device storage.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Interfaces.IEventAggregator">
+            <summary>
+            Lightweight publish/subscribe event aggregator for decoupled communication.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Interfaces.IExportService">
+            <summary>
+            Interface for data export operations.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Interfaces.IImportService">
+            <summary>
+            Interface for data import operations.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Interfaces.IScannerService">
+            <summary>
+            Interface for barcode/QR code scanning operations.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.Interfaces.ISessionService">
+            <summary>
+            Interface for inventory session business logic.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.Services.ScannerService">
+            <summary>
+            Handles barcode/QR code scan processing, duplicate detection, and feedback.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.Services.ScannerService.ProcessScanAsync(System.Int32,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.Services.ScannerService.IsDuplicateAsync(System.Int32,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.Services.ScannerService.ProvideFeedbackAsync(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="T:InventoryScanner.Services.SessionService">
+            <summary>
+            Business logic for inventory scan sessions.
+            </summary>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.BaseViewModel">
+            <summary>
+            Base class for all ViewModels providing common functionality.
+            </summary>
+            <inheritdoc/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.BaseViewModel.IsNotBusy">
+            <summary>
+            Inverse of IsBusy for binding.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.BaseViewModel.GetSafePage">
+            <summary>
+            Safely resolves the current visible page for displaying alerts.
+            Avoids JavaProxyThrowable by preferring Shell.Current.CurrentPage.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.BaseViewModel.ShowAlertAsync(System.String,System.String,System.String)">
+            <summary>
+            Displays an alert dialog to the user.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.BaseViewModel.ShowConfirmAsync(System.String,System.String,System.String,System.String)">
+            <summary>
+            Displays a confirmation dialog and returns the result.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.BaseViewModel.NavigateToAsync(System.String,System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Navigates to a page by route.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.BaseViewModel.NavigateBackAsync">
+            <summary>
+            Navigates back.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.BaseViewModel.ExecuteBusyAsync(System.Func{System.Threading.Tasks.Task},System.String)">
+            <summary>
+            Wraps an async operation with busy state management and error handling.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.BaseViewModel.IsBusy">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.BaseViewModel._isBusy"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.BaseViewModel.Title">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.BaseViewModel._title"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.BaseViewModel.IsRefreshing">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.BaseViewModel._isRefreshing"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.BaseViewModel.StatusMessage">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.BaseViewModel._statusMessage"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.BaseViewModel.HasError">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.BaseViewModel._hasError"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.BaseViewModel.ErrorMessage">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.BaseViewModel._errorMessage"/>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.DashboardViewModel">
+            <summary>
+            ViewModel for the main dashboard view. Computes overall statistics across all rooms/sessions.
+            </summary>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.DashboardViewModel.LoadSummaryAsync">
+            <summary>
+            Loads summary data from the SQLite database.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.DashboardViewModel.TotalSessions">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.DashboardViewModel._totalSessions"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.DashboardViewModel.TotalScannedItems">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.DashboardViewModel._totalScannedItems"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.DashboardViewModel.HasSessions">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.DashboardViewModel._hasSessions"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.DashboardViewModel.DraftSessions">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.DashboardViewModel._draftSessions"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.DashboardViewModel.InProgressSessions">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.DashboardViewModel._inProgressSessions"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.DashboardViewModel.CompletedSessions">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.DashboardViewModel._completedSessions"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.DashboardViewModel.ArchivedSessions">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.DashboardViewModel._archivedSessions"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.DashboardViewModel.LastUpdatedSummary">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.DashboardViewModel._lastUpdatedSummary"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.DashboardViewModel.RecentSessions">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.DashboardViewModel._recentSessions"/>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.DashboardViewModel.loadSummaryCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.DashboardViewModel.LoadSummaryCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.DashboardViewModel.LoadSummaryCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.DashboardViewModel.LoadSummaryAsync"/>.</summary>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.ExportImportViewModel">
+            <summary>
+            ViewModel for export and import operations.
+            </summary>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ExportImportViewModel.LoadSessionsAsync">
+            <summary>
+            Loads available sessions for export.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ExportImportViewModel.ExportAsync">
+            <summary>
+            Exports selected or all sessions.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ExportImportViewModel.PickImportFileAsync">
+            <summary>
+            Picks a file for import.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ExportImportViewModel.ImportAsync">
+            <summary>
+            Imports data from the selected file.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ExportImportViewModel.ShareExportedFileAsync(System.String)">
+            <summary>
+            Shares the exported file using the system share sheet.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ExportImportViewModel.SaveExportedFileToDeviceAsync(System.String)">
+            <summary>
+            Copies the app-private export into a user-accessible device folder.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ExportImportViewModel.GoBackAsync">
+            <summary>
+            Navigates back.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.AvailableSessions">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._availableSessions"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.SelectedSessions">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._selectedSessions"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.SelectedFormat">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._selectedFormat"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.ExportAll">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._exportAll"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.ExportStatusMessage">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._exportStatusMessage"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.ExportSuccess">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._exportSuccess"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.LastExportPath">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._lastExportPath"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.LastDeviceExportPath">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._lastDeviceExportPath"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.ImportFilePath">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._importFilePath"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.ImportStatusMessage">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._importStatusMessage"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.ImportSuccess">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._importSuccess"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.IsImporting">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._isImporting"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.IsExporting">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ExportImportViewModel._isExporting"/>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ExportImportViewModel.loadSessionsCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ExportImportViewModel.LoadSessionsCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.LoadSessionsCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ExportImportViewModel.LoadSessionsAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ExportImportViewModel.exportCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ExportImportViewModel.ExportCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.ExportCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ExportImportViewModel.ExportAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ExportImportViewModel.pickImportFileCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ExportImportViewModel.PickImportFileCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.PickImportFileCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ExportImportViewModel.PickImportFileAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ExportImportViewModel.importCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ExportImportViewModel.ImportCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.ImportCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ExportImportViewModel.ImportAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ExportImportViewModel.goBackCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ExportImportViewModel.GoBackCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ExportImportViewModel.GoBackCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ExportImportViewModel.GoBackAsync"/>.</summary>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.LoginViewModel">
+            <summary>
+            ViewModel for the login page. Handles offline authentication.
+            </summary>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.LoginViewModel.LoginAsync">
+            <summary>
+            Attempts to log in with the provided credentials.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.LoginViewModel.TogglePasswordVisibility">
+            <summary>
+            Toggles password visibility.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.LoginViewModel.CheckAuthAsync">
+            <summary>
+            Checks if user is already authenticated on page load.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.LoginViewModel.Username">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.LoginViewModel._username"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.LoginViewModel.Password">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.LoginViewModel._password"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.LoginViewModel.IsPasswordVisible">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.LoginViewModel._isPasswordVisible"/>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.LoginViewModel.loginCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.LoginViewModel.LoginCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.LoginViewModel.LoginCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.LoginViewModel.LoginAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.LoginViewModel.togglePasswordVisibilityCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.LoginViewModel.TogglePasswordVisibilityCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.LoginViewModel.TogglePasswordVisibilityCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.LoginViewModel.TogglePasswordVisibility"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.LoginViewModel.checkAuthCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.LoginViewModel.CheckAuthCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.LoginViewModel.CheckAuthCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.LoginViewModel.CheckAuthAsync"/>.</summary>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.RoomViewModel">
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.RoomViewModel.RoomName">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.RoomViewModel._roomName"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.RoomViewModel.SelectedBuilding">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.RoomViewModel._selectedBuilding"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.RoomViewModel.SelectedLocation">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.RoomViewModel._selectedLocation"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.RoomViewModel.SelectedRoom">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.RoomViewModel._selectedRoom"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.RoomViewModel.Buildings">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.RoomViewModel._buildings"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.RoomViewModel.Locations">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.RoomViewModel._locations"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.RoomViewModel.Rooms">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.RoomViewModel._rooms"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.RoomViewModel.RoomStatusMessage">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.RoomViewModel._roomStatusMessage"/>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.RoomViewModel.OnSelectedBuildingChanged(InventoryScanner.Models.Building)">
+            <summary>Executes the logic for when <see cref="P:InventoryScanner.ViewModels.RoomViewModel.SelectedBuilding"/> just changed.</summary>
+            <param name="value">The new property value that was set.</param>
+            <remarks>This method is invoked right after the value of <see cref="P:InventoryScanner.ViewModels.RoomViewModel.SelectedBuilding"/> is changed.</remarks>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.RoomViewModel.OnSelectedLocationChanged(InventoryScanner.Models.Location)">
+            <summary>Executes the logic for when <see cref="P:InventoryScanner.ViewModels.RoomViewModel.SelectedLocation"/> just changed.</summary>
+            <param name="value">The new property value that was set.</param>
+            <remarks>This method is invoked right after the value of <see cref="P:InventoryScanner.ViewModels.RoomViewModel.SelectedLocation"/> is changed.</remarks>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.RoomViewModel.loadCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.RoomViewModel.LoadCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.RoomViewModel.LoadCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.RoomViewModel.LoadAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.RoomViewModel.saveCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.RoomViewModel.SaveCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.RoomViewModel.SaveCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.RoomViewModel.SaveAsync"/>.</summary>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.ScanHistoryViewModel">
+            <summary>
+            ViewModel for viewing scan history of a specific session.
+            </summary>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ScanHistoryViewModel.LoadHistoryAsync">
+            <summary>
+            Loads scan history for the current session.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ScanHistoryViewModel.SearchAsync">
+            <summary>
+            Searches scan history.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ScanHistoryViewModel.DeleteItemAsync(InventoryScanner.Models.ScannedItem)">
+            <summary>
+            Deletes a single scanned item with confirmation.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ScanHistoryViewModel.ClearAllAsync">
+            <summary>
+            Clears all scan history for this session with confirmation.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.ScanHistoryViewModel.GoBackAsync">
+            <summary>
+            Navigates back to scanner.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.SessionId">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScanHistoryViewModel._sessionId"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.SessionName">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScanHistoryViewModel._sessionName"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.ScannedItems">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScanHistoryViewModel._scannedItems"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.SearchQuery">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScanHistoryViewModel._searchQuery"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.TotalCount">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScanHistoryViewModel._totalCount"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.IsEmpty">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScanHistoryViewModel._isEmpty"/>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ScanHistoryViewModel.loadHistoryCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ScanHistoryViewModel.LoadHistoryCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.LoadHistoryCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ScanHistoryViewModel.LoadHistoryAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ScanHistoryViewModel.searchCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ScanHistoryViewModel.SearchCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.SearchCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ScanHistoryViewModel.SearchAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ScanHistoryViewModel.deleteItemCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ScanHistoryViewModel.DeleteItemCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.DeleteItemCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand`1"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ScanHistoryViewModel.DeleteItemAsync(InventoryScanner.Models.ScannedItem)"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ScanHistoryViewModel.clearAllCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ScanHistoryViewModel.ClearAllCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.ClearAllCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ScanHistoryViewModel.ClearAllAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ScanHistoryViewModel.goBackCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ScanHistoryViewModel.GoBackCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScanHistoryViewModel.GoBackCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ScanHistoryViewModel.GoBackAsync"/>.</summary>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.ScannerViewModel">
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.SessionId">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._sessionId"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.SessionName">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._sessionName"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.SessionRoom">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._sessionRoom"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.LastScannedCode">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._lastScannedCode"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.LastBarcodeType">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._lastBarcodeType"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.ScanCount">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._scanCount"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.IsDuplicate">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._isDuplicate"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.IsScanning">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._isScanning"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.ShowDuplicateAlert">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._showDuplicateAlert"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.ShowSuccessAlert">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._showSuccessAlert"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.ScanStatusMessage">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._scanStatusMessage"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.RecentScans">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.ScannerViewModel._recentScans"/>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ScannerViewModel.loadSessionInfoCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ScannerViewModel.LoadSessionInfoCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.LoadSessionInfoCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ScannerViewModel.LoadSessionInfoAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ScannerViewModel.processBarcodeCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ScannerViewModel.ProcessBarcodeCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.ProcessBarcodeCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand`1"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ScannerViewModel.ProcessBarcodeAsync(System.String)"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ScannerViewModel.toggleScanCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ScannerViewModel.ToggleScanCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.ToggleScanCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ScannerViewModel.ToggleScan"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ScannerViewModel.viewHistoryCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ScannerViewModel.ViewHistoryCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.ViewHistoryCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ScannerViewModel.ViewHistoryAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.ScannerViewModel.goBackCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.ScannerViewModel.GoBackCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.ScannerViewModel.GoBackCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.ScannerViewModel.GoBackAsync"/>.</summary>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.SessionDetailViewModel">
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.SessionId">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._sessionId"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.IsNew">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._isNew"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.SessionName">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._sessionName"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.SelectedBuilding">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._selectedBuilding"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.SelectedLocation">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._selectedLocation"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.SelectedRoom">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._selectedRoom"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.SelectedOffice">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._selectedOffice"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.Description">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._description"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.SelectedStatus">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._selectedStatus"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.CreatedBy">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._createdBy"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.CreatedDate">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._createdDate"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.ScanCount">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._scanCount"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.ExpectedCount">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._expectedCount"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.CanEdit">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._canEdit"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.CanStartScanning">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._canStartScanning"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.RecentScans">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._recentScans"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.Buildings">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._buildings"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.Locations">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._locations"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.Rooms">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._rooms"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.Offices">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionDetailViewModel._offices"/>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SessionDetailViewModel.OnSelectedBuildingChanged(InventoryScanner.Models.Building)">
+            <summary>Executes the logic for when <see cref="P:InventoryScanner.ViewModels.SessionDetailViewModel.SelectedBuilding"/> just changed.</summary>
+            <param name="value">The new property value that was set.</param>
+            <remarks>This method is invoked right after the value of <see cref="P:InventoryScanner.ViewModels.SessionDetailViewModel.SelectedBuilding"/> is changed.</remarks>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SessionDetailViewModel.OnSelectedLocationChanged(InventoryScanner.Models.Location)">
+            <summary>Executes the logic for when <see cref="P:InventoryScanner.ViewModels.SessionDetailViewModel.SelectedLocation"/> just changed.</summary>
+            <param name="value">The new property value that was set.</param>
+            <remarks>This method is invoked right after the value of <see cref="P:InventoryScanner.ViewModels.SessionDetailViewModel.SelectedLocation"/> is changed.</remarks>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionDetailViewModel.loadSessionCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionDetailViewModel.LoadSessionCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.LoadSessionCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionDetailViewModel.LoadSessionAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionDetailViewModel.saveCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionDetailViewModel.SaveCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.SaveCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionDetailViewModel.SaveAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionDetailViewModel.startScanningCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionDetailViewModel.StartScanningCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.StartScanningCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionDetailViewModel.StartScanningAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionDetailViewModel.startScanningV2Command">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionDetailViewModel.StartScanningV2Command"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.StartScanningV2Command">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionDetailViewModel.StartScanningV2Async"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionDetailViewModel.viewHistoryCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionDetailViewModel.ViewHistoryCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.ViewHistoryCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionDetailViewModel.ViewHistoryAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionDetailViewModel.cancelCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionDetailViewModel.CancelCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionDetailViewModel.CancelCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionDetailViewModel.CancelAsync"/>.</summary>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.SessionListViewModel">
+            <summary>
+            ViewModel for the session list page. Displays, searches, and manages sessions.
+            </summary>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SessionListViewModel.LoadSessionsAsync">
+            <summary>
+            Loads all sessions from the database.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SessionListViewModel.CreateSessionAsync">
+            <summary>
+            Navigates to create a new session.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SessionListViewModel.SelectSessionAsync(InventoryScanner.Models.InventorySession)">
+            <summary>
+            Navigates to view/edit a selected session.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SessionListViewModel.DeleteSessionAsync(InventoryScanner.Models.InventorySession)">
+            <summary>
+            Deletes a session with confirmation.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SessionListViewModel.SearchAsync">
+            <summary>
+            Performs search with current filters.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SessionListViewModel.OpenExportImportAsync">
+            <summary>
+            Navigates to export/import page.
+            </summary>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SessionListViewModel.LogoutAsync">
+            <summary>
+            Logs out the current user.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.Sessions">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionListViewModel._sessions"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.SearchQuery">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionListViewModel._searchQuery"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.SelectedStatusFilter">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionListViewModel._selectedStatusFilter"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.CurrentUser">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionListViewModel._currentUser"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.IsEmpty">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SessionListViewModel._isEmpty"/>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionListViewModel.loadSessionsCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionListViewModel.LoadSessionsCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.LoadSessionsCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionListViewModel.LoadSessionsAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionListViewModel.createSessionCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionListViewModel.CreateSessionCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.CreateSessionCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionListViewModel.CreateSessionAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionListViewModel.selectSessionCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionListViewModel.SelectSessionCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.SelectSessionCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand`1"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionListViewModel.SelectSessionAsync(InventoryScanner.Models.InventorySession)"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionListViewModel.deleteSessionCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionListViewModel.DeleteSessionCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.DeleteSessionCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand`1"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionListViewModel.DeleteSessionAsync(InventoryScanner.Models.InventorySession)"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionListViewModel.searchCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionListViewModel.SearchCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.SearchCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionListViewModel.SearchAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionListViewModel.openExportImportCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionListViewModel.OpenExportImportCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.OpenExportImportCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionListViewModel.OpenExportImportAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SessionListViewModel.logoutCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SessionListViewModel.LogoutCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SessionListViewModel.LogoutCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SessionListViewModel.LogoutAsync"/>.</summary>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.SettingsViewModel">
+            <summary>
+            ViewModel for the application settings page. Handles theme preference management and catalog imports.
+            </summary>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SettingsViewModel.ApplyTheme">
+            <summary>
+            Changes the active user application theme preference.
+            </summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.SelectedTheme">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SettingsViewModel._selectedTheme"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.CatalogFilePath">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SettingsViewModel._catalogFilePath"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.CatalogStatusMessage">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SettingsViewModel._catalogStatusMessage"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.IsCatalogImporting">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SettingsViewModel._isCatalogImporting"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.DatabaseResetConfirmation">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SettingsViewModel._databaseResetConfirmation"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.DatabaseResetStatusMessage">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SettingsViewModel._databaseResetStatusMessage"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.IsDatabaseResetting">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SettingsViewModel._isDatabaseResetting"/>
+        </member>
+        <member name="M:InventoryScanner.ViewModels.SettingsViewModel.OnSelectedThemeChanged(System.String)">
+            <summary>Executes the logic for when <see cref="P:InventoryScanner.ViewModels.SettingsViewModel.SelectedTheme"/> just changed.</summary>
+            <param name="value">The new property value that was set.</param>
+            <remarks>This method is invoked right after the value of <see cref="P:InventoryScanner.ViewModels.SettingsViewModel.SelectedTheme"/> is changed.</remarks>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SettingsViewModel.applyThemeCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SettingsViewModel.ApplyThemeCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.ApplyThemeCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SettingsViewModel.ApplyTheme"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SettingsViewModel.pickCatalogFileCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SettingsViewModel.PickCatalogFileCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.PickCatalogFileCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SettingsViewModel.PickCatalogFileAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SettingsViewModel.importCatalogCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SettingsViewModel.ImportCatalogCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.ImportCatalogCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SettingsViewModel.ImportCatalogAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SettingsViewModel.resetDatabaseCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SettingsViewModel.ResetDatabaseCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SettingsViewModel.ResetDatabaseCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SettingsViewModel.ResetDatabaseAsync"/>.</summary>
+        </member>
+        <member name="T:InventoryScanner.ViewModels.SetupViewModel">
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SetupViewModel.StatusText">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SetupViewModel._statusText"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SetupViewModel.SelectedFilePath">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SetupViewModel._selectedFilePath"/>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SetupViewModel.IsSetupComplete">
+            <inheritdoc cref="F:InventoryScanner.ViewModels.SetupViewModel._isSetupComplete"/>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SetupViewModel.loadCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SetupViewModel.LoadCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SetupViewModel.LoadCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SetupViewModel.LoadAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SetupViewModel.pickFileCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SetupViewModel.PickFileCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SetupViewModel.PickFileCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SetupViewModel.PickFileAsync"/>.</summary>
+        </member>
+        <member name="F:InventoryScanner.ViewModels.SetupViewModel.importCommand">
+            <summary>The backing field for <see cref="P:InventoryScanner.ViewModels.SetupViewModel.ImportCommand"/>.</summary>
+        </member>
+        <member name="P:InventoryScanner.ViewModels.SetupViewModel.ImportCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:InventoryScanner.ViewModels.SetupViewModel.ImportAsync"/>.</summary>
+        </member>
+        <member name="T:InventoryScanner.Resource">
+            <summary>
+            Android Resource Designer class.
+            Exposes the Android Resource designer assembly into the project Namespace.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Maui.Controls.ColorAnimationExtensions_Button.TextColorTo(Microsoft.Maui.Controls.Button,Microsoft.Maui.Graphics.Color,System.UInt32,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationToken)">
+            <summary>
+            Animates the TextColor of an <see cref = "T:Microsoft.Maui.ITextStyle"/> to the given color
+            </summary>
+            <param name = "element"></param>
+            <param name = "color">The target color to animate the <see cref = "P:Microsoft.Maui.ITextStyle.TextColor"/> to</param>
+            <param name = "rate">The time, in milliseconds, between the frames of the animation</param>
+            <param name = "length">The duration, in milliseconds, of the animation</param>
+            <param name = "easing">The easing function to be used in the animation</param>
+            <param name = "token"><see cref = "T:System.Threading.CancellationToken"/></param>
+            <returns>Value indicating if the animation completed successfully or not</returns>
+        </member>
+        <member name="M:Microsoft.Maui.Controls.ColorAnimationExtensions_DatePicker.TextColorTo(Microsoft.Maui.Controls.DatePicker,Microsoft.Maui.Graphics.Color,System.UInt32,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationToken)">
+            <summary>
+            Animates the TextColor of an <see cref = "T:Microsoft.Maui.ITextStyle"/> to the given color
+            </summary>
+            <param name = "element"></param>
+            <param name = "color">The target color to animate the <see cref = "P:Microsoft.Maui.ITextStyle.TextColor"/> to</param>
+            <param name = "rate">The time, in milliseconds, between the frames of the animation</param>
+            <param name = "length">The duration, in milliseconds, of the animation</param>
+            <param name = "easing">The easing function to be used in the animation</param>
+            <param name = "token"><see cref = "T:System.Threading.CancellationToken"/></param>
+            <returns>Value indicating if the animation completed successfully or not</returns>
+        </member>
+        <member name="M:Microsoft.Maui.Controls.ColorAnimationExtensions_Editor.TextColorTo(Microsoft.Maui.Controls.Editor,Microsoft.Maui.Graphics.Color,System.UInt32,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationToken)">
+            <summary>
+            Animates the TextColor of an <see cref = "T:Microsoft.Maui.ITextStyle"/> to the given color
+            </summary>
+            <param name = "element"></param>
+            <param name = "color">The target color to animate the <see cref = "P:Microsoft.Maui.ITextStyle.TextColor"/> to</param>
+            <param name = "rate">The time, in milliseconds, between the frames of the animation</param>
+            <param name = "length">The duration, in milliseconds, of the animation</param>
+            <param name = "easing">The easing function to be used in the animation</param>
+            <param name = "token"><see cref = "T:System.Threading.CancellationToken"/></param>
+            <returns>Value indicating if the animation completed successfully or not</returns>
+        </member>
+        <member name="M:Microsoft.Maui.Controls.ColorAnimationExtensions_Entry.TextColorTo(Microsoft.Maui.Controls.Entry,Microsoft.Maui.Graphics.Color,System.UInt32,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationToken)">
+            <summary>
+            Animates the TextColor of an <see cref = "T:Microsoft.Maui.ITextStyle"/> to the given color
+            </summary>
+            <param name = "element"></param>
+            <param name = "color">The target color to animate the <see cref = "P:Microsoft.Maui.ITextStyle.TextColor"/> to</param>
+            <param name = "rate">The time, in milliseconds, between the frames of the animation</param>
+            <param name = "length">The duration, in milliseconds, of the animation</param>
+            <param name = "easing">The easing function to be used in the animation</param>
+            <param name = "token"><see cref = "T:System.Threading.CancellationToken"/></param>
+            <returns>Value indicating if the animation completed successfully or not</returns>
+        </member>
+        <member name="M:Microsoft.Maui.Controls.ColorAnimationExtensions_InputView.TextColorTo(Microsoft.Maui.Controls.InputView,Microsoft.Maui.Graphics.Color,System.UInt32,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationToken)">
+            <summary>
+            Animates the TextColor of an <see cref = "T:Microsoft.Maui.ITextStyle"/> to the given color
+            </summary>
+            <param name = "element"></param>
+            <param name = "color">The target color to animate the <see cref = "P:Microsoft.Maui.ITextStyle.TextColor"/> to</param>
+            <param name = "rate">The time, in milliseconds, between the frames of the animation</param>
+            <param name = "length">The duration, in milliseconds, of the animation</param>
+            <param name = "easing">The easing function to be used in the animation</param>
+            <param name = "token"><see cref = "T:System.Threading.CancellationToken"/></param>
+            <returns>Value indicating if the animation completed successfully or not</returns>
+        </member>
+        <member name="M:Microsoft.Maui.Controls.ColorAnimationExtensions_Label.TextColorTo(Microsoft.Maui.Controls.Label,Microsoft.Maui.Graphics.Color,System.UInt32,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationToken)">
+            <summary>
+            Animates the TextColor of an <see cref = "T:Microsoft.Maui.ITextStyle"/> to the given color
+            </summary>
+            <param name = "element"></param>
+            <param name = "color">The target color to animate the <see cref = "P:Microsoft.Maui.ITextStyle.TextColor"/> to</param>
+            <param name = "rate">The time, in milliseconds, between the frames of the animation</param>
+            <param name = "length">The duration, in milliseconds, of the animation</param>
+            <param name = "easing">The easing function to be used in the animation</param>
+            <param name = "token"><see cref = "T:System.Threading.CancellationToken"/></param>
+            <returns>Value indicating if the animation completed successfully or not</returns>
+        </member>
+        <member name="M:Microsoft.Maui.Controls.ColorAnimationExtensions_Picker.TextColorTo(Microsoft.Maui.Controls.Picker,Microsoft.Maui.Graphics.Color,System.UInt32,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationToken)">
+            <summary>
+            Animates the TextColor of an <see cref = "T:Microsoft.Maui.ITextStyle"/> to the given color
+            </summary>
+            <param name = "element"></param>
+            <param name = "color">The target color to animate the <see cref = "P:Microsoft.Maui.ITextStyle.TextColor"/> to</param>
+            <param name = "rate">The time, in milliseconds, between the frames of the animation</param>
+            <param name = "length">The duration, in milliseconds, of the animation</param>
+            <param name = "easing">The easing function to be used in the animation</param>
+            <param name = "token"><see cref = "T:System.Threading.CancellationToken"/></param>
+            <returns>Value indicating if the animation completed successfully or not</returns>
+        </member>
+        <member name="M:Microsoft.Maui.Controls.ColorAnimationExtensions_RadioButton.TextColorTo(Microsoft.Maui.Controls.RadioButton,Microsoft.Maui.Graphics.Color,System.UInt32,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationToken)">
+            <summary>
+            Animates the TextColor of an <see cref = "T:Microsoft.Maui.ITextStyle"/> to the given color
+            </summary>
+            <param name = "element"></param>
+            <param name = "color">The target color to animate the <see cref = "P:Microsoft.Maui.ITextStyle.TextColor"/> to</param>
+            <param name = "rate">The time, in milliseconds, between the frames of the animation</param>
+            <param name = "length">The duration, in milliseconds, of the animation</param>
+            <param name = "easing">The easing function to be used in the animation</param>
+            <param name = "token"><see cref = "T:System.Threading.CancellationToken"/></param>
+            <returns>Value indicating if the animation completed successfully or not</returns>
+        </member>
+        <member name="M:Microsoft.Maui.Controls.ColorAnimationExtensions_SearchBar.TextColorTo(Microsoft.Maui.Controls.SearchBar,Microsoft.Maui.Graphics.Color,System.UInt32,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationToken)">
+            <summary>
+            Animates the TextColor of an <see cref = "T:Microsoft.Maui.ITextStyle"/> to the given color
+            </summary>
+            <param name = "element"></param>
+            <param name = "color">The target color to animate the <see cref = "P:Microsoft.Maui.ITextStyle.TextColor"/> to</param>
+            <param name = "rate">The time, in milliseconds, between the frames of the animation</param>
+            <param name = "length">The duration, in milliseconds, of the animation</param>
+            <param name = "easing">The easing function to be used in the animation</param>
+            <param name = "token"><see cref = "T:System.Threading.CancellationToken"/></param>
+            <returns>Value indicating if the animation completed successfully or not</returns>
+        </member>
+        <member name="M:Microsoft.Maui.Controls.ColorAnimationExtensions_TimePicker.TextColorTo(Microsoft.Maui.Controls.TimePicker,Microsoft.Maui.Graphics.Color,System.UInt32,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationToken)">
+            <summary>
+            Animates the TextColor of an <see cref = "T:Microsoft.Maui.ITextStyle"/> to the given color
+            </summary>
+            <param name = "element"></param>
+            <param name = "color">The target color to animate the <see cref = "P:Microsoft.Maui.ITextStyle.TextColor"/> to</param>
+            <param name = "rate">The time, in milliseconds, between the frames of the animation</param>
+            <param name = "length">The duration, in milliseconds, of the animation</param>
+            <param name = "easing">The easing function to be used in the animation</param>
+            <param name = "token"><see cref = "T:System.Threading.CancellationToken"/></param>
+            <returns>Value indicating if the animation completed successfully or not</returns>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.BarcodeRegex_0">
+            <summary>Custom <see cref="T:System.Text.RegularExpressions.Regex"/>-derived type for the BarcodeRegex method.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.BarcodeRegex_0.Instance">
+            <summary>Cached, thread-safe singleton instance.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.BarcodeRegex_0.#ctor">
+            <summary>Initializes the instance.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.BarcodeRegex_0.RunnerFactory">
+            <summary>Provides a factory for creating <see cref="T:System.Text.RegularExpressions.RegexRunner"/> instances to be used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.BarcodeRegex_0.RunnerFactory.CreateInstance">
+            <summary>Creates an instance of a <see cref="T:System.Text.RegularExpressions.RegexRunner"/> used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.BarcodeRegex_0.RunnerFactory.Runner">
+            <summary>Provides the runner that contains the custom logic implementing the specified regular expression.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.BarcodeRegex_0.RunnerFactory.Runner.Scan(System.ReadOnlySpan{System.Char})">
+            <summary>Scan the <paramref name="inputSpan"/> starting from base.runtextstart for the next match.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.BarcodeRegex_0.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Search <paramref name="inputSpan"/> starting from base.runtextpos for the next location a match could possibly start.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if a possible match was found; false if no more matches are possible.</returns>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.BarcodeRegex_0.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Determine whether <paramref name="inputSpan"/> at base.runtextpos is a match for the regular expression.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if the regular expression matches at the current position; otherwise, false.</returns>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.Utilities">
+            <summary>Helper methods used by generated <see cref="T:System.Text.RegularExpressions.Regex"/>-derived implementations.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout">
+            <summary>Default timeout value set in <see cref="T:System.AppContext"/>, or <see cref="F:System.Text.RegularExpressions.Regex.InfiniteMatchTimeout"/> if none was set.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_hasTimeout">
+            <summary>Whether <see cref="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout"/> is non-infinite.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_ascii_FBFFFFFFFFFFFFFFFFFFFF7F">
+            <summary>Supports searching for characters in or not in " !#$%&amp;'()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~".</summary>
+        </member>
+        <member name="T:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs">
+            <summary>
+            A helper type providing cached, reusable <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instances
+            for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsBusy">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsBusy" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsNotBusy">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsNotBusy" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Title">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Title" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsRefreshing">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsRefreshing" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.StatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "StatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.HasError">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "HasError" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ErrorMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ErrorMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.TotalSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "TotalSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.TotalScannedItems">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "TotalScannedItems" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.HasSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "HasSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.DraftSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "DraftSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.InProgressSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "InProgressSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.CompletedSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "CompletedSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ArchivedSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ArchivedSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.LastUpdatedSummary">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "LastUpdatedSummary" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.RecentSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "RecentSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.AvailableSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "AvailableSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SelectedSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SelectedSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SelectedFormat">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SelectedFormat" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ExportAll">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ExportAll" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ExportStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ExportStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ExportSuccess">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ExportSuccess" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.LastExportPath">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "LastExportPath" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.LastDeviceExportPath">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "LastDeviceExportPath" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ImportFilePath">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ImportFilePath" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ImportStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ImportStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ImportSuccess">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ImportSuccess" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsImporting">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsImporting" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsExporting">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsExporting" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Username">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Username" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Password">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Password" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsPasswordVisible">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsPasswordVisible" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.RoomName">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "RoomName" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SelectedBuilding">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SelectedBuilding" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SelectedLocation">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SelectedLocation" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SelectedRoom">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SelectedRoom" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Buildings">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Buildings" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Locations">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Locations" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Rooms">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Rooms" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.RoomStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "RoomStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SessionId">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SessionId" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SessionName">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SessionName" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ScannedItems">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ScannedItems" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SearchQuery">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SearchQuery" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.TotalCount">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "TotalCount" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsEmpty">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsEmpty" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SessionRoom">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SessionRoom" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.LastScannedCode">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "LastScannedCode" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.LastBarcodeType">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "LastBarcodeType" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ScanCount">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ScanCount" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsDuplicate">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsDuplicate" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsScanning">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsScanning" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ShowDuplicateAlert">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ShowDuplicateAlert" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ShowSuccessAlert">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ShowSuccessAlert" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ScanStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ScanStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.RecentScans">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "RecentScans" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsNew">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsNew" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SelectedOffice">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SelectedOffice" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Description">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Description" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SelectedStatus">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SelectedStatus" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.CreatedBy">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "CreatedBy" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.CreatedDate">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "CreatedDate" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.MissingCount">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "MissingCount" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ScanProgress">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ScanProgress" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ScanProgressPercent">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ScanProgressPercent" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ExpectedCount">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ExpectedCount" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.CanEdit">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "CanEdit" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.CanStartScanning">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "CanStartScanning" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Offices">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Offices" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Sessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Sessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SelectedStatusFilter">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SelectedStatusFilter" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.CurrentUser">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "CurrentUser" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SelectedTheme">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SelectedTheme" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.CatalogFilePath">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "CatalogFilePath" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.CatalogStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "CatalogStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsCatalogImporting">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsCatalogImporting" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.DatabaseResetConfirmation">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "DatabaseResetConfirmation" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.DatabaseResetStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "DatabaseResetStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsDatabaseResetting">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsDatabaseResetting" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.StatusText">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "StatusText" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SelectedFilePath">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SelectedFilePath" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsSetupComplete">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsSetupComplete" generated properties.</summary>
+        </member>
+        <member name="T:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs">
+            <summary>
+            A helper type providing cached, reusable <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instances
+            for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsBusy">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsBusy" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsNotBusy">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsNotBusy" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Title">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Title" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsRefreshing">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsRefreshing" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.StatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "StatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.HasError">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "HasError" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ErrorMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ErrorMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.TotalSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "TotalSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.TotalScannedItems">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "TotalScannedItems" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.HasSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "HasSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.DraftSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "DraftSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.InProgressSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "InProgressSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.CompletedSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "CompletedSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ArchivedSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ArchivedSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.LastUpdatedSummary">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "LastUpdatedSummary" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.RecentSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "RecentSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.AvailableSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "AvailableSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SelectedSessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SelectedSessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SelectedFormat">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SelectedFormat" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ExportAll">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ExportAll" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ExportStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ExportStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ExportSuccess">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ExportSuccess" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.LastExportPath">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "LastExportPath" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.LastDeviceExportPath">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "LastDeviceExportPath" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ImportFilePath">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ImportFilePath" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ImportStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ImportStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ImportSuccess">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ImportSuccess" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsImporting">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsImporting" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsExporting">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsExporting" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Username">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Username" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Password">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Password" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsPasswordVisible">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsPasswordVisible" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.RoomName">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "RoomName" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SelectedBuilding">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SelectedBuilding" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SelectedLocation">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SelectedLocation" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SelectedRoom">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SelectedRoom" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Buildings">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Buildings" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Locations">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Locations" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Rooms">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Rooms" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.RoomStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "RoomStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SessionId">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SessionId" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SessionName">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SessionName" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ScannedItems">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ScannedItems" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SearchQuery">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SearchQuery" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.TotalCount">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "TotalCount" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsEmpty">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsEmpty" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SessionRoom">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SessionRoom" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.LastScannedCode">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "LastScannedCode" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.LastBarcodeType">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "LastBarcodeType" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ScanCount">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ScanCount" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsDuplicate">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsDuplicate" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsScanning">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsScanning" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ShowDuplicateAlert">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ShowDuplicateAlert" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ShowSuccessAlert">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ShowSuccessAlert" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ScanStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ScanStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.RecentScans">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "RecentScans" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsNew">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsNew" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SelectedOffice">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SelectedOffice" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Description">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Description" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SelectedStatus">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SelectedStatus" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.CreatedBy">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "CreatedBy" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.CreatedDate">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "CreatedDate" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.MissingCount">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "MissingCount" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ScanProgress">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ScanProgress" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ScanProgressPercent">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ScanProgressPercent" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ExpectedCount">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ExpectedCount" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.CanEdit">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "CanEdit" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.CanStartScanning">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "CanStartScanning" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Offices">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Offices" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Sessions">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Sessions" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SelectedStatusFilter">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SelectedStatusFilter" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.CurrentUser">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "CurrentUser" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SelectedTheme">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SelectedTheme" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.CatalogFilePath">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "CatalogFilePath" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.CatalogStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "CatalogStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsCatalogImporting">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsCatalogImporting" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.DatabaseResetConfirmation">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "DatabaseResetConfirmation" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.DatabaseResetStatusMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "DatabaseResetStatusMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsDatabaseResetting">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsDatabaseResetting" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.StatusText">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "StatusText" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SelectedFilePath">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SelectedFilePath" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsSetupComplete">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsSetupComplete" generated properties.</summary>
+        </member>
+    </members>
+</doc>

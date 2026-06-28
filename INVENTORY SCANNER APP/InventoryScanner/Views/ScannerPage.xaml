@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:InventoryScanner.ViewModels"
+             xmlns:models="clr-namespace:InventoryScanner.Models"
+             x:Class="InventoryScanner.Views.ScannerPage"
+             x:DataType="vm:ScannerViewModel"
+             Title="{Binding Title}"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="Black">
+
+    <!-- View Model bindings and layout structured with no deep nesting -->
+    <Grid RowDefinitions="Auto, *, Auto">
+
+        <!-- Top Bar Overlay (Floating style) -->
+        <Border Grid.Row="0" BackgroundColor="#E00F172A" StrokeThickness="0" Padding="16,12" ZIndex="10"
+                Margin="12,12,12,0" StrokeShape="RoundRectangle 12">
+            <Grid ColumnDefinitions="Auto, *, Auto, Auto" ColumnSpacing="8">
+                <ImageButton Command="{Binding GoBackCommand}" BackgroundColor="Transparent"
+                             WidthRequest="40" HeightRequest="40" VerticalOptions="Center">
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="←" Size="24" Color="White"/>
+                    </ImageButton.Source>
+                </ImageButton>
+
+                <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2" VerticalOptions="Center">
+                    <Label Text="{Binding SessionName}" FontSize="15" FontAttributes="Bold"
+                           TextColor="White" HorizontalTextAlignment="Center" LineBreakMode="TailTruncation"/>
+                    <Label Text="{Binding SessionRoom}" FontSize="12" TextColor="#38BDF8"
+                           HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+
+                <ImageButton x:Name="TorchButton"
+                             Grid.Column="2"
+                             Clicked="OnTorchButtonClicked"
+                             BackgroundColor="#1E293B"
+                             WidthRequest="40"
+                             HeightRequest="40"
+                             CornerRadius="10"
+                             Padding="8"
+                             VerticalOptions="Center">
+                    <ImageButton.Source>
+                        <FontImageSource x:Name="TorchIcon" Glyph="âš¡" Size="20" Color="#94A3B8"/>
+                    </ImageButton.Source>
+                </ImageButton>
+
+                <Border Grid.Column="3" StrokeShape="RoundRectangle 10" BackgroundColor="#0F766E"
+                        StrokeThickness="0" Padding="12,6" VerticalOptions="Center">
+                    <Label Text="{Binding ScanCount, StringFormat='{0} Scanned'}" FontSize="13"
+                           FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Full-screen Camera Frame -->
+        <Grid Grid.Row="1" BackgroundColor="Black">
+            <!-- BoxView placeholder - replaced programmatically with CameraBarcodeReaderView in code-behind -->
+            <BoxView x:Name="CameraPlaceholder" BackgroundColor="#111827"/>
+
+            <!-- Scanner Frame Overlay (Aesthetics) -->
+            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                
+                <!-- Semi-transparent dimmed background around focus area -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="260"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="260"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <BoxView Grid.Row="0" Grid.ColumnSpan="3" BackgroundColor="#7F000000"/>
+                <BoxView Grid.Row="2" Grid.ColumnSpan="3" BackgroundColor="#7F000000"/>
+                <BoxView Grid.Row="1" Grid.Column="0" BackgroundColor="#7F000000"/>
+                <BoxView Grid.Row="1" Grid.Column="2" BackgroundColor="#7F000000"/>
+
+                <!-- Viewer Scope Frame -->
+                <Border Grid.Row="1" Grid.Column="1" StrokeShape="RoundRectangle 24" 
+                        Stroke="#14B8A6" StrokeThickness="3.5" BackgroundColor="Transparent"
+                        HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <Grid>
+                        <!-- Focus crosshair -->
+                        <BoxView WidthRequest="30" HeightRequest="2" BackgroundColor="#14B8A6" HorizontalOptions="Center" VerticalOptions="Center" Opacity="0.7"/>
+                        <BoxView WidthRequest="2" HeightRequest="30" BackgroundColor="#14B8A6" HorizontalOptions="Center" VerticalOptions="Center" Opacity="0.7"/>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Success Alert Banner (Flashes Green) -->
+            <Border IsVisible="{Binding ShowSuccessAlert}"
+                    BackgroundColor="#E010B981" StrokeShape="RoundRectangle 12"
+                    StrokeThickness="0" Padding="18,12" ZIndex="20"
+                    HorizontalOptions="Center" VerticalOptions="Start" Margin="0,90,0,0"
+                    Shadow="{StaticResource FabShadow}">
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="✓" FontSize="20" FontAttributes="Bold" TextColor="White" VerticalOptions="Center"/>
+                    <Label Text="ITEM SCANNED SUCCESS" FontSize="14" FontAttributes="Bold"
+                           TextColor="White" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Duplicate Alert Banner (Flashes Amber) -->
+            <Border IsVisible="{Binding ShowDuplicateAlert}"
+                    BackgroundColor="#E0F59E0B" StrokeShape="RoundRectangle 12"
+                    StrokeThickness="0" Padding="18,12" ZIndex="20"
+                    HorizontalOptions="Center" VerticalOptions="Start" Margin="0,90,0,0"
+                    Shadow="{StaticResource FabShadow}">
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="⚠" FontSize="20" FontAttributes="Bold" TextColor="White" VerticalOptions="Center"/>
+                    <Label Text="DUPLICATE BARCODE DETECTED" FontSize="14" FontAttributes="Bold"
+                           TextColor="White" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- Floating Scan Results & Control Deck (Bottom Panel) -->
+        <Border Grid.Row="2" BackgroundColor="#E00F172A" StrokeThickness="0" Padding="16,16" 
+                Margin="12,0,12,12" StrokeShape="RoundRectangle 16" ZIndex="10">
+            <VerticalStackLayout Spacing="14">
+
+                <!-- Interactive Scanning status banner -->
+                <Grid ColumnDefinitions="*, Auto">
+                    <Label Text="{Binding ScanStatusMessage}" FontSize="13" TextColor="#94A3B8" VerticalOptions="Center"/>
+                    <Label Grid.Column="1" Text="● Saved Locally" FontSize="11" TextColor="#14B8A6" FontAttributes="Bold" VerticalOptions="Center"/>
+                </Grid>
+
+                <!-- Last Scanned Code Display Box -->
+                <Border StrokeShape="RoundRectangle 10" BackgroundColor="#1E293B"
+                        StrokeThickness="0" Padding="14,12"
+                        IsVisible="{Binding LastScannedCode, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Label Text="◇" FontSize="20" VerticalOptions="Center" TextColor="#14B8A6"/>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="10,0,0,0" VerticalOptions="Center">
+                            <Label Text="LAST SCAN VALUE" FontSize="10" TextColor="#64748B" FontAttributes="Bold"/>
+                            <Label Text="{Binding LastScannedCode}" FontSize="15" FontAttributes="Bold"
+                                   TextColor="White" LineBreakMode="TailTruncation"/>
+                        </VerticalStackLayout>
+                        <Border Grid.Column="2" StrokeShape="RoundRectangle 6" BackgroundColor="#0F766E" StrokeThickness="0" Padding="8,4" VerticalOptions="Center">
+                            <Label Text="{Binding LastBarcodeType}" FontSize="11" TextColor="White" FontAttributes="Bold"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Control Buttons Area -->
+                <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="16">
+                    <Button Grid.Column="0" Text="View History" Command="{Binding ViewHistoryCommand}"
+                            BackgroundColor="#1E293B" TextColor="White"
+                            FontSize="14" FontAttributes="Bold" CornerRadius="10" HeightRequest="48"/>
+
+                    <Button Grid.Column="1"
+                            Text="{Binding IsScanning, Converter={StaticResource BoolToScanTextConverter}}"
+                            Command="{Binding ToggleScanCommand}"
+                            BackgroundColor="{Binding IsScanning, Converter={StaticResource BoolToScanColorConverter}}"
+                            TextColor="White" FontSize="16" FontAttributes="Bold"
+                            CornerRadius="26" WidthRequest="76" HeightRequest="52"/>
+
+                    <Button Grid.Column="2" Text="Finish Session" Command="{Binding GoBackCommand}"
+                            BackgroundColor="#1E293B" TextColor="White"
+                            FontSize="14" FontAttributes="Bold" CornerRadius="10" HeightRequest="48"/>
+                </Grid>
+                
+            </VerticalStackLayout>
+        </Border>
+
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,5 @@
+<api>
+  <acw-types partial-assembly-name="Xamarin.Firebase.Encoders.JSON" module-name="Xamarin.Firebase.Encoders.JSON.dll">
+    <type assembly-qualified-name="Firebase.Encoders.JSON.INumberedEnum, Xamarin.Firebase.Encoders.JSON, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="com.google.firebase.encoders.json.NumberedEnum" java-key="com.google.firebase.encoders.json.NumberedEnum" managed-key="Firebase.Encoders.JSON.INumberedEnum" partial-assembly-qualified-name="Firebase.Encoders.JSON.INumberedEnum, Xamarin.Firebase.Encoders.JSON" />
+  </acw-types>
+</api>

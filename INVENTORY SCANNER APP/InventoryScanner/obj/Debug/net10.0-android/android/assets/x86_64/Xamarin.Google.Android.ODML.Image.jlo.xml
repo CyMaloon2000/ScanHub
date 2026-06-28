@@ -1,0 +1,6 @@
+<api>
+  <acw-types partial-assembly-name="Xamarin.Google.Android.ODML.Image" module-name="Xamarin.Google.Android.ODML.Image.dll">
+    <type assembly-qualified-name="Xamarin.Google.Android.Odml.Image.MlImage+IImageFormat, Xamarin.Google.Android.ODML.Image, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="com.google.android.odml.image.MlImage$ImageFormat" java-key="com.google.android.odml.image.MlImage$ImageFormat" managed-key="Xamarin.Google.Android.Odml.Image.MlImage.IImageFormat" partial-assembly-qualified-name="Xamarin.Google.Android.Odml.Image.MlImage+IImageFormat, Xamarin.Google.Android.ODML.Image" />
+    <type assembly-qualified-name="Xamarin.Google.Android.Odml.Image.MlImage+IStorageType, Xamarin.Google.Android.ODML.Image, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" compat-jni-name="com.google.android.odml.image.MlImage$StorageType" java-key="com.google.android.odml.image.MlImage$StorageType" managed-key="Xamarin.Google.Android.Odml.Image.MlImage.IStorageType" partial-assembly-qualified-name="Xamarin.Google.Android.Odml.Image.MlImage+IStorageType, Xamarin.Google.Android.ODML.Image" />
+  </acw-types>
+</api>
